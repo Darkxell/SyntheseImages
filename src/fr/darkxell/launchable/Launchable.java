@@ -16,13 +16,11 @@ public class Launchable {
 		BufferedImage image = Filesutility.readImage("C:\\Users\\ncandela\\Desktop\\test.png");
 
 		System.out.println(image == null ? "Null image pointer" : image.getHeight() + "x" + image.getWidth());
-		
-		GraphConsole gc = new GraphConsole();
-		
-		//gc.display();
 
-		
-		//gc.print("Hello world!");
+		GraphConsole gc = new GraphConsole();
+		// gc.display();
+
+		gc.print("Hello world!");
 	}
 
 }

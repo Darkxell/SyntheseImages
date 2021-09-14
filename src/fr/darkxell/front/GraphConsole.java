@@ -1,5 +1,6 @@
 package fr.darkxell.front;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,7 +17,7 @@ public class GraphConsole {
 	private JFrame frame;
 	private TransPane pane;
 	private BufferedImage consoleBuffer;
-	
+
 	public GraphConsole() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -30,7 +31,8 @@ public class GraphConsole {
 		this.consoleBuffer = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
 		frame.add(this.pane);
 		frame.setLocationRelativeTo(null);
-		// frame.setAlwaysOnTop(true);
+		frame.setName("Gabriel console");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setResizable(false);
 		frame.setVisible(true);
@@ -41,7 +43,7 @@ public class GraphConsole {
 			public void run() {
 				try {
 					for (;;) {
-						Thread.sleep(25);
+						Thread.sleep(16);
 						tick();
 					}
 				} catch (Exception e) {
@@ -52,17 +54,20 @@ public class GraphConsole {
 
 	}
 
-	public void setLocation(int x, int y) {
-		frame.setLocation(x, y);
-	}
-
-	public void setSize(int width, int height) {
-		this.frame.setSize(width, height);
-		this.pane.customResize(width, height);
+	/** Shifts the console up by a line, and prints the text parameter to it. */
+	public void print(String text) {
+		BufferedImage framebuffer = new BufferedImage(this.consoleBuffer.getWidth(), this.consoleBuffer.getHeight(),
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = (Graphics2D) framebuffer.getGraphics().create();
+		g2d.drawImage(this.consoleBuffer, 0, -30, null);
+		g2d.setColor(Color.BLACK);
+		g2d.drawString(text, 40, 40);
+		g2d.dispose();
+		this.consoleBuffer = framebuffer;
 	}
 
 	/** Called 60 times per second by an independent updater. */
-	public void tick() {
+	private void tick() {
 		pane.repaint();
 	}
 
@@ -95,9 +100,7 @@ public class GraphConsole {
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2d = (Graphics2D) g.create();
-			
 			g2d.drawImage(consoleBuffer, 0, 0, null);
-
 			g2d.dispose();
 		}
 
