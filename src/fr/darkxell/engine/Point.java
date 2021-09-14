@@ -101,13 +101,23 @@ public class Point {
 	 * Changes the values of this point, so that the norm of the vector formed by
 	 * its coordinates is 1. This is a rather expensive calculation.
 	 */
-	public Point normalize() {
+	public Point normalizeUltra() {
 		double magnitude_squared = 0;
 		for (int i = 0; i < positions.length; i++)
 			magnitude_squared += positions[i] * positions[i];
 		float invsqrt = MathUtil.Q_rsqrt((float) magnitude_squared);
 		for (int i = 0; i < positions.length; i++)
 			positions[i] *= invsqrt;
+		return this;
+	}
+	
+	/**
+	 * Changes the values of this point, so that the norm of the vector formed by
+	 * its coordinates is 1. This is a rather expensive calculation.
+	 */
+	public Point normalize() {
+		double n = this.norm();
+		multiply(1 / n);
 		return this;
 	}
 

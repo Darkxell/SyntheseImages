@@ -59,6 +59,8 @@ public class PointTester extends TestCase {
 		double norma = a.norm();
 		double normb = b.norm();
 
+		System.out.println(normb);
+		
 		assertTrue(norma >= normb - 0.001d && norma <= normb + 0.001d);
 	}
 
