@@ -155,6 +155,18 @@ public class Point {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Point))
+			return false;
+		if (this.getDimention() != ((Point) obj).getDimention())
+			return false;
+		for (int i = 0; i < positions.length; i++)
+			if (this.positions[i] != ((Point) obj).n(i))
+				return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		String toreturn = "Point in dim:" + this.getDimention() + " [";
 		for (int i = 0; i < this.getDimention(); i++)
