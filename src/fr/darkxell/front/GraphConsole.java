@@ -62,6 +62,7 @@ public class GraphConsole {
 		g2d.drawImage(this.consoleBuffer, 0, -30, null);
 		g2d.setColor(Color.BLACK);
 		g2d.drawString(text, 40, 40);
+		g2d.fillRect(80, 80, 80, 80);
 		g2d.dispose();
 		this.consoleBuffer = framebuffer;
 	}
@@ -85,12 +86,6 @@ public class GraphConsole {
 			this.parent = parent;
 		}
 
-		public void customResize(int width, int height) {
-			this.width = width;
-			this.height = height;
-			this.setSize(width, height);
-		}
-
 		@Override
 		public Dimension getPreferredSize() {
 			return new Dimension(this.width, this.height);
@@ -100,7 +95,7 @@ public class GraphConsole {
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2d = (Graphics2D) g.create();
-			g2d.drawImage(consoleBuffer, 0, 0, null);
+			g2d.drawImage(consoleBuffer, 0 , 0 , null);
 			g2d.dispose();
 		}
 

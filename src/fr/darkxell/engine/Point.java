@@ -1,5 +1,6 @@
 package fr.darkxell.engine;
 
+import java.util.Arrays;
 
 import fr.darkxell.utility.MathUtil;
 
@@ -37,7 +38,7 @@ public class Point {
 	 * a smaller dimension than parsed n param.
 	 */
 	public double getN(int n) {
-		return positions.length > n ? 0 : positions[n];
+		return positions.length <= n ? 0 : positions[n];
 	}
 
 	/** Alias to <code>getN(int)</code> */
@@ -82,13 +83,16 @@ public class Point {
 	 * Adds the positions of parsed point to this point positions. If one point has
 	 * a higher dimension than the other, both will be cast to mach that same higher
 	 * dimension.
+	 * 
+	 * @return
 	 */
-	public void add(Point p) {
+	public Point add(Point p) {
 		int maxlength = Math.max(p.getDimention(), this.getDimention());
 		double[] toreturn = new double[maxlength];
 		for (int i = 0; i < maxlength; i++)
 			toreturn[i] = p.n(i) + this.n(i);
 		this.positions = toreturn;
+		return this;
 		// TODO : optimisation: reuse the memory addresses in the array if p.dim <=
 		// this.dim
 	}
@@ -97,22 +101,59 @@ public class Point {
 	 * Changes the values of this point, so that the norm of the vector formed by
 	 * its coordinates is 1. This is a rather expensive calculation.
 	 */
-	public void normalize() {
-		double magnitude_squared=0;
+	public Point normalize() {
+		double magnitude_squared = 0;
 		for (int i = 0; i < positions.length; i++)
-			magnitude_squared += positions[i]*positions[i];
-		float invsqrt = MathUtil.Q_rsqrt((float)magnitude_squared);		
+			magnitude_squared += positions[i] * positions[i];
+		float invsqrt = MathUtil.Q_rsqrt((float) magnitude_squared);
 		for (int i = 0; i < positions.length; i++)
 			positions[i] *= invsqrt;
+		return this;
 	}
-	
-	
-	
-	// compare norm
-	// Comparenorm manhatan
-	
-	
-	
+
+	/** Returns the norm of this vector */
+	public double norm() {
+		return Math.sqrt(this.normSquared());
+	}
+
+	/**
+	 * Returns the square of this vector's norm. Faster then the actual norm
+	 * calculation.
+	 */
+	public double normSquared() {
+		double toreturn = 0;
+		for (int i = 0; i < positions.length; i++)
+			toreturn += positions[i] * positions[i];
+		return toreturn;
+	}
+
+	/**
+	 * Predicate that returns true if this vector has a larger norm than the parsed
+	 * vector's norm. Returns true if both norms are equals.
+	 */
+	public boolean isBiggerThan(Point p) {
+		return this.normSquared() >= p.normSquared();
+	}
+
+	/** multiply the coordinates of this point by the given scalar */
+	public Point multiply(double m) {
+		for (int i = 0; i < positions.length; i++)
+			positions[i] *= m;
+		return this;
+	}
+
+	public boolean isZero() {
+		for (int i = 0; i < positions.length; i++)
+			if (positions[i] != 0)
+				return false;
+		return true;
+	}
+
+	/** Returns a new point object identical to this one. */
+	public Point clone() {
+		return new Point(Arrays.copyOf(positions, positions.length));
+	}
+
 	@Override
 	public String toString() {
 		String toreturn = "Point in dim:" + this.getDimention() + " [";
