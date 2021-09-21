@@ -25,7 +25,12 @@ public abstract class MathUtil {
 			return 255f;
 		if (number <= min)
 			return 0f;
-		return number - min + (number - min) / max * 255;
+		return (number - min) / (max - min) * 255;
+	}
+
+	/** Returns the inverse grad255 */
+	public static float rgrad255(float min, float max, float number) {
+		return 255 - grad255(min, max, number);
 	}
 
 }

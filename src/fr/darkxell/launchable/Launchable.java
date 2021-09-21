@@ -3,6 +3,7 @@ package fr.darkxell.launchable;
 import java.awt.image.BufferedImage;
 
 import fr.darkxell.engine.Camera;
+import fr.darkxell.engine.LightSource;
 import fr.darkxell.engine.Point;
 import fr.darkxell.engine.Scene;
 import fr.darkxell.engine.Sphere;
@@ -29,8 +30,10 @@ public class Launchable {
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0));
-		scene.elements.add(new Sphere(new Point(15d, 0d, 0d), 2));
-
+		scene.elements.add(new Sphere(new Point(15d, 0d, 1d), 1.6f));
+		scene.elements.add(new Sphere(new Point(16d, 0.5d, -0.5d), 1.2f));
+		scene.lights.add(new LightSource(new Point(15d, 4d, 1d)));
+		
 		BufferedImage img = scene.render();
 		Filesutility.saveImage(img);
 
