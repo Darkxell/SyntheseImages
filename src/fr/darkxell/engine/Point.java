@@ -97,6 +97,17 @@ public class Point {
 		// this.dim
 	}
 
+	public Point substract(Point p) {
+		int maxlength = Math.max(p.getDimention(), this.getDimention());
+		double[] toreturn = new double[maxlength];
+		for (int i = 0; i < maxlength; i++)
+			toreturn[i] = this.n(i) - p.n(i);
+		this.positions = toreturn;
+		return this;
+		// TODO : optimisation: reuse the memory addresses in the array if p.dim <=
+		// this.dim
+	}
+
 	/**
 	 * Changes the values of this point, so that the norm of the vector formed by
 	 * its coordinates is 1. This is a rather expensive calculation.
@@ -110,7 +121,7 @@ public class Point {
 			positions[i] *= invsqrt;
 		return this;
 	}
-	
+
 	/**
 	 * Changes the values of this point, so that the norm of the vector formed by
 	 * its coordinates is 1. This is a rather expensive calculation.
@@ -150,6 +161,19 @@ public class Point {
 		for (int i = 0; i < positions.length; i++)
 			positions[i] *= m;
 		return this;
+	}
+
+	/**
+	 * @return scalar product of this vector by the parsed vector. 0 if both vectors
+	 *         have different dimensions.
+	 */
+	public double scalarproduct(Point q) {
+		// FIXME: assume 0 if different dimention, this is bug prone.
+		double scalarproduct = 0.0;
+		if (this.positions.length == q.positions.length)
+			for (int i = 0; i < q.positions.length; ++i)
+				scalarproduct += q.positions[i] * this.positions[i];
+		return scalarproduct;
 	}
 
 	public boolean isZero() {

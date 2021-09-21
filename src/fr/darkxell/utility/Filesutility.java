@@ -46,9 +46,9 @@ public abstract class Filesutility {
 		}
 		return null;
 	}
-	
+
 	public static void saveImage(BufferedImage img) {
-		File outputfile = new File("C:\\Users\\ncandela\\Desktop\\debug.png");
+		File outputfile = new File("C:\\Users\\ncandela\\Desktop\\java_" + System.currentTimeMillis() + ".png");
 		try {
 			ImageIO.write(img, "png", outputfile);
 		} catch (IOException e) {

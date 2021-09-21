@@ -18,5 +18,5 @@ public abstract class MathUtil {
 		y = y * (threehalfs - (x2 * y * y)); // 1st iteration
 		return y;
 	}
-
+	
 }
