@@ -18,12 +18,12 @@ public class PointTester extends TestCase {
 	@Test
 	public void testAddition() {
 		Point a = new Point(4, 5, 6);
-		Point b = new Point(12, 11, 10);
+		Point b = new Point(12, 11, -3);
 		a.add(b);
 
 		assertEquals((int) a.x(), 16);
 		assertEquals((int) a.y(), 16);
-		assertEquals((int) a.z(), 16);
+		assertEquals((int) a.z(), 3);
 	}
 
 	@Test
@@ -39,12 +39,16 @@ public class PointTester extends TestCase {
 	@Test
 	public void testNormalize() {
 		Point a = new Point(55, 16, 31);
+		Point b = a.clone();
 		double n = a.norm();
 		a.multiply(1 / n);
 
-		double norm = a.norm();
+		b.normalize();
 
-		assertTrue(norm >= 0.999d && norm <= 1.001d);
+		double norma = a.norm();
+		double normb = b.norm();
+		
+		assertTrue(norma >= normb - 0.001d && norma <= normb + 0.001d);
 	}
 
 	@Test
@@ -54,7 +58,7 @@ public class PointTester extends TestCase {
 		double n = a.norm();
 		a.multiply(1 / n);
 
-		b.normalize();
+		b.normalizeUltra();
 
 		double norma = a.norm();
 		double normb = b.norm();

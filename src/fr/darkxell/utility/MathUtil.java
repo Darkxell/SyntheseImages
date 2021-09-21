@@ -7,6 +7,8 @@ public abstract class MathUtil {
 	 * https://en.wikipedia.org/wiki/Fast_inverse_square_root
 	 */
 	public static float Q_rsqrt(float number) {
+		// FIXME: Not sure this works, this fails a unit test later down the line
+		// Fuck quake 3 algorithms anyways, too big brain.
 		long i = 0;
 		float x2, y;
 		final float threehalfs = 1.5F;
