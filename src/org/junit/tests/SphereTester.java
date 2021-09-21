@@ -31,6 +31,10 @@ public class SphereTester extends TestCase {
 		Sphere s2 = new Sphere(new Point(10, 10, 10), 2);
 		Optional<Float> intersect2 = s2.intersect(x, dir3);
 		assertEquals(8.8453f, intersect2.isEmpty() ? 0 : intersect2.get().floatValue());
+		
+		Sphere s3 = new Sphere(new Point(-5, 0, 0), 5.5f);
+		Optional<Float> intersect3 = s3.intersect(x, dir);
+		assertEquals(0.5f, intersect3.isEmpty() ? 0 : intersect3.get().floatValue());
 	}
 
 }
