@@ -2,12 +2,16 @@ package fr.darkxell.launchable;
 
 import java.awt.image.BufferedImage;
 
+import fr.darkxell.engine.Camera;
 import fr.darkxell.engine.Point;
+import fr.darkxell.engine.Scene;
+import fr.darkxell.engine.Sphere;
 import fr.darkxell.utility.Filesutility;
 
 public class Launchable {
 
 	public static void main(String[] args) {
+
 		System.out.println("Hello world.");
 
 		String s = Filesutility.readFile("C:\\Users\\ncandela\\Desktop\\docs\\test.txt");
@@ -21,8 +25,15 @@ public class Launchable {
 //		gc.display();
 //		gc.print("Hello world!");
 
-		
-		Filesutility.saveImage(image);
+//		Filesutility.saveImage(image);
+
+		Scene scene = new Scene();
+		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0));
+		scene.elements.add(new Sphere(new Point(15d, 0d, 0d), 2));
+
+		BufferedImage img = scene.render();
+		Filesutility.saveImage(img);
+
 	}
 
 	/** Tp1, made a function for quick collapse in eclipse. Try me. */
