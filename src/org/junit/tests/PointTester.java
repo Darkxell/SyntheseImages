@@ -3,6 +3,7 @@ package org.junit.tests;
 import org.junit.Test;
 
 import fr.darkxell.engine.Point;
+import fr.darkxell.utility.MathUtil;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -25,7 +26,7 @@ public class PointTester extends TestCase {
 		assertEquals((int) a.y(), 16);
 		assertEquals((int) a.z(), 3);
 	}
-	
+
 	@Test
 	public void testSubstraction() {
 		Point a = new Point(4, 5, 6);
@@ -84,6 +85,26 @@ public class PointTester extends TestCase {
 		double s = a.scalarproduct(b);
 
 		assertEquals(s, 4d);
+	}
+
+	@Test
+	public void testMathNAN() {
+//		System.out.println("0d/0d : " + (double) (0d / 0d));
+//		System.out.println("1d/0d : " + (double) (1d / 0d));
+//		System.out.println("-1d/0d : " + (double) (-1d / 0d));
+//		System.out.println(Double.valueOf((double) (0d / 0d)).equals(Double.valueOf(Double.NaN)));
+//
+//		System.out.println(Double.NaN == Double.NaN);
+		
+		assertEquals(0d / 0d, Double.NaN);
+		assertEquals(1d / 0d, Double.POSITIVE_INFINITY);
+		// this is some wild fuckery.
+		assertEquals(Double.NaN, MathUtil.ieeemax(Double.NaN, Double.NaN));
+		assertEquals(Double.NaN, MathUtil.ieeemax(0d / 0d, 0d / 0d));
+		assertEquals(Double.POSITIVE_INFINITY, MathUtil.ieeemax(1d / 0d, 0d / 0d));
+		assertEquals(Double.POSITIVE_INFINITY, MathUtil.ieeemax(0d / 0d, 1d / 0d));
+		assertEquals(Double.NEGATIVE_INFINITY, MathUtil.ieeemax(-1d / 0d, 0d / 0d));
+		assertEquals(Double.NEGATIVE_INFINITY, MathUtil.ieeemin(-1d / 0d, 0d / 0d));
 	}
 
 }

@@ -192,10 +192,10 @@ public class Point {
 
 	public Point oneOn() {
 		for (int i = 0; i < positions.length; i++)
-//			if (positions[i] != 0)
+			if (positions[i] != 0)
 				positions[i] = 1 / positions[i];
-//			else
-//				positions[i] = Double.POSITIVE_INFINITY;
+			else
+				positions[i] = Double.NaN; // WHAT THE FUCK JAVA
 		return this;
 	}
 

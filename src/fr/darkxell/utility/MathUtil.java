@@ -38,9 +38,9 @@ public abstract class MathUtil {
 	 *         return the other. May return Nan anyways if both numbers are NaN.
 	 */
 	public static double ieeemin(double a, double b) {
-		if (a == Double.NaN)
+		if (Double.isNaN(a))
 			return b;
-		if (b == Double.NaN)
+		if (Double.isNaN(b))
 			return a;
 		if (a == Double.POSITIVE_INFINITY)
 			return b;
@@ -58,9 +58,9 @@ public abstract class MathUtil {
 	 *         return the other. May return Nan anyways if both numbers are NaN.
 	 */
 	public static double ieeemax(double a, double b) {
-		if (a == Double.NaN)
+		if (Double.isNaN(a))
 			return b;
-		if (b == Double.NaN)
+		if (Double.isNaN(b))
 			return a;
 		if (a == Double.POSITIVE_INFINITY)
 			return a;
