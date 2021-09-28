@@ -6,37 +6,38 @@ import fr.darkxell.engine.Camera;
 import fr.darkxell.engine.LightSource;
 import fr.darkxell.engine.Point;
 import fr.darkxell.engine.Scene;
-import fr.darkxell.engine.Sphere;
+import fr.darkxell.engine.shapes.Sphere;
 import fr.darkxell.utility.Filesutility;
 
 public class Launchable {
 
 	public static void main(String[] args) {
 
-		System.out.println("Hello world.");
-
-		String s = Filesutility.readFile("C:\\Users\\ncandela\\Desktop\\docs\\test.txt");
-		System.out.println(s);
-
-		BufferedImage image = Filesutility.readImage("C:\\Users\\ncandela\\Desktop\\docs\\test.png");
-
-		System.out.println(image == null ? "Null image pointer" : image.getHeight() + "x" + image.getWidth());
+//		System.out.println("Hello world.");
+//
+//		String s = Filesutility.readFile("C:\\Users\\ncandela\\Desktop\\docs\\test.txt");
+//		System.out.println(s);
+//
+//		BufferedImage image = Filesutility.readImage("C:\\Users\\ncandela\\Desktop\\docs\\test.png");
+//		System.out.println(image == null ? "Null image pointer" : image.getHeight() + "x" + image.getWidth());
 
 //		GraphConsole gc = new GraphConsole();
 //		gc.display();
 //		gc.print("Hello world!");
 
-//		Filesutility.saveImage(image);
-
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0));
 		scene.elements.add(new Sphere(new Point(15d, 0d, 1d), 1.6f));
 		scene.elements.add(new Sphere(new Point(16d, 0.5d, -0.5d), 1.2f));
-		scene.lights.add(new LightSource(new Point(15d, 4d, 1d)));
+		
+		scene.lights.add(new LightSource(new Point(15d, -1d, -3d)));
+		scene.elements.add(new Sphere(new Point(15d, -1.4d, -3d), 0.15f));
+		
+		scene.lights.add(new LightSource(new Point(15d, 1.8d, 2.5d), 30));
+		scene.elements.add(new Sphere(new Point(15d, 2d, 2.5d), 0.15f));
 		
 		BufferedImage img = scene.render();
 		Filesutility.saveImage(img);
-
 	}
 
 	/** Tp1, made a function for quick collapse in eclipse. Try me. */

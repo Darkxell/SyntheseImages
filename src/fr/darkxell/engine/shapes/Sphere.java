@@ -1,6 +1,9 @@
-package fr.darkxell.engine;
+package fr.darkxell.engine.shapes;
 
 import java.util.Optional;
+
+import fr.darkxell.engine.Point;
+import fr.darkxell.engine.SceneElement;
 
 public class Sphere implements SceneElement {
 
@@ -20,7 +23,14 @@ public class Sphere implements SceneElement {
 		if (delta < 0)
 			return Optional.empty();
 		float f1 = (float) ((-b - Math.sqrt(delta)) / (2 * a)), f2 = (float) ((-b + Math.sqrt(delta)) / (2 * a));
-		return Optional.of((f1 < 0 && f2 < 0) ? -1 : (f1 < 0 ? f2 : Math.min(f1, f2)));
+		if(f1 < 0 && f2 < 0) 
+			return Optional.empty();
+		return Optional.of(f1 < 0 ? f2 : Math.min(f1, f2));
+	}
+
+	@Override
+	public Point normal(Point reference) {
+		return reference.clone().substract(center).normalize();
 	}
 
 }

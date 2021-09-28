@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import fr.darkxell.engine.Point;
-import fr.darkxell.engine.Sphere;
+import fr.darkxell.engine.shapes.Sphere;
 import fr.darkxell.utility.MathUtil;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -43,6 +43,16 @@ public class SphereTester extends TestCase {
 		assertEquals(255f, MathUtil.grad255(0, 10, 11));
 		assertEquals(0f, MathUtil.grad255(0, 10, -2));
 		assertTrue(MathUtil.grad255(0, 10, 8) > MathUtil.grad255(0, 10, 3));
+	}
+	
+	@Test
+	public void testNormal() {
+		Sphere s = new Sphere(new Point(0, 0, 0), 5f);
+		Point n = s.normal(new Point(5, 0, 0));
+		
+		assertEquals(n.x(), 1d);
+		assertEquals(n.y(), 0d);
+		assertEquals(n.z(), 0d);
 	}
 
 }
