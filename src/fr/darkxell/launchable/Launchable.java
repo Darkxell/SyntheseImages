@@ -28,9 +28,9 @@ public class Launchable {
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0));
-		// scene.elements.add(new Sphere(new Point(15d, 0d, 1d), 1.6f));
-		//scene.elements.add(new Sphere(new Point(16d, 0.5d, -0.5d), 1.2f));
-		scene.elements.add(new Cube(new Point(16d, 0.5d, -0.5d), 1f, 1f, 1f));
+		scene.elements.add(new Sphere(new Point(15d, 0d, 1d), 1.6f));
+		scene.elements.add(new Sphere(new Point(16d, 0.5d, -0.5d), 1.2f));
+		scene.elements.add(new Cube(new Point(13d, 0.8d, -0.9d), 0.7f, 0.7f, 0.7f));
 
 		scene.lights.add(new LightSource(new Point(15d, -1d, -3d)));
 		scene.elements.add(new Sphere(new Point(15d, -1.4d, -3d), 0.15f));

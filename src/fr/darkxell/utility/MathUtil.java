@@ -33,4 +33,44 @@ public abstract class MathUtil {
 		return 255 - grad255(min, max, number);
 	}
 
+	/**
+	 * @return the minimum value given the two parameters. If one is NaN, will
+	 *         return the other. May return Nan anyways if both numbers are NaN.
+	 */
+	public static double ieeemin(double a, double b) {
+		if (a == Double.NaN)
+			return b;
+		if (b == Double.NaN)
+			return a;
+		if (a == Double.POSITIVE_INFINITY)
+			return b;
+		if (b == Double.POSITIVE_INFINITY)
+			return a;
+		if (a == Double.NEGATIVE_INFINITY)
+			return a;
+		if (b == Double.NEGATIVE_INFINITY)
+			return b;
+		return a < b ? a : b;
+	}
+
+	/**
+	 * @return the maximum value given the two parameters. If one is NaN, will
+	 *         return the other. May return Nan anyways if both numbers are NaN.
+	 */
+	public static double ieeemax(double a, double b) {
+		if (a == Double.NaN)
+			return b;
+		if (b == Double.NaN)
+			return a;
+		if (a == Double.POSITIVE_INFINITY)
+			return a;
+		if (b == Double.POSITIVE_INFINITY)
+			return b;
+		if (a == Double.NEGATIVE_INFINITY)
+			return b;
+		if (b == Double.NEGATIVE_INFINITY)
+			return a;
+		return a > b ? a : b;
+	}
+
 }

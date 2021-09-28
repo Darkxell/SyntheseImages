@@ -70,6 +70,11 @@ public class Point {
 		return positions.length >= 3 ? positions[2] : 0;
 	}
 
+	/** Short for position pointer. Returns a pointer to the inner pointer array. */
+	public double[] pp() {
+		return this.positions;
+	}
+
 	/** @return the addition of the parsed two points. */
 	public static Point add(Point a, Point b) {
 		int maxlength = Math.max(a.getDimention(), b.getDimention());
@@ -187,10 +192,10 @@ public class Point {
 
 	public Point oneOn() {
 		for (int i = 0; i < positions.length; i++)
-			if (positions[i] != 0)
+//			if (positions[i] != 0)
 				positions[i] = 1 / positions[i];
-			else
-				positions[i] = Double.POSITIVE_INFINITY;
+//			else
+//				positions[i] = Double.POSITIVE_INFINITY;
 		return this;
 	}
 
