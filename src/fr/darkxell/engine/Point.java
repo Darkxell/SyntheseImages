@@ -97,6 +97,15 @@ public class Point {
 		// this.dim
 	}
 
+	public Point mul(Point p) {
+		int maxlength = Math.max(p.getDimention(), this.getDimention());
+		double[] toreturn = new double[maxlength];
+		for (int i = 0; i < maxlength; i++)
+			toreturn[i] = p.n(i) * this.n(i);
+		this.positions = toreturn;
+		return this;
+	}
+
 	public Point substract(Point p) {
 		int maxlength = Math.max(p.getDimention(), this.getDimention());
 		double[] toreturn = new double[maxlength];
@@ -174,6 +183,21 @@ public class Point {
 			for (int i = 0; i < q.positions.length; ++i)
 				scalarproduct += q.positions[i] * this.positions[i];
 		return scalarproduct;
+	}
+
+	public Point oneOn() {
+		for (int i = 0; i < positions.length; i++)
+			if (positions[i] != 0)
+				positions[i] = 1 / positions[i];
+			else
+				positions[i] = Double.POSITIVE_INFINITY;
+		return this;
+	}
+
+	public Point abs() {
+		for (int i = 0; i < positions.length; i++)
+			positions[i] = Math.abs(positions[i]);
+		return this;
 	}
 
 	public boolean isZero() {

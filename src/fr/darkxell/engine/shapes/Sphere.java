@@ -18,8 +18,10 @@ public class Sphere implements SceneElement {
 	@Override
 	public Optional<Float> intersect(Point source, Point vector) {
 		Point XmC = source.clone().substract(center);
-		float a = (float) vector.normSquared(), b = (float) (2 * (XmC.scalarproduct(vector))),
-				c = (float) XmC.normSquared() - radius * radius, delta = b * b - 4 * a * c;
+		float a = (float) vector.normSquared(), 
+				b = (float) (2 * (XmC.scalarproduct(vector))),
+				c = (float) XmC.normSquared() - radius * radius,
+				delta = b * b - 4 * a * c;
 		if (delta < 0)
 			return Optional.empty();
 		float f1 = (float) ((-b - Math.sqrt(delta)) / (2 * a)), f2 = (float) ((-b + Math.sqrt(delta)) / (2 * a));
