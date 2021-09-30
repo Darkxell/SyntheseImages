@@ -1,5 +1,6 @@
 package fr.darkxell.launchable;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import fr.darkxell.engine.Camera;
@@ -27,11 +28,14 @@ public class Launchable {
 //		gc.print("Hello world!");
 
 		Scene scene = new Scene();
-		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0));
+		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0.0000001d));
 		scene.elements.add(new Sphere(new Point(15d, 0d, 1d), 1.6f));
-		scene.elements.add(new Sphere(new Point(16d, 0.5d, -0.5d), 1.2f));
-		scene.elements.add(new Cube(new Point(13d, 0.8d, -0.9d), 0.7f, 0.7f, 0.7f));
-
+		Sphere s = new Sphere(new Point(16d, 0.5d, -0.5d), 1.2f);
+		s.mat.color = Color.GREEN;
+		scene.elements.add(s);
+		
+		scene.elements.add(new Cube(new Point(14d, 2.1d, -1.2d), 0.7f, 0.7f, 0.7f));
+		
 		scene.lights.add(new LightSource(new Point(15d, -1d, -3d)));
 		scene.elements.add(new Sphere(new Point(15d, -1.4d, -3d), 0.15f));
 

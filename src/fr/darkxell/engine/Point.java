@@ -124,7 +124,8 @@ public class Point {
 
 	/**
 	 * Changes the values of this point, so that the norm of the vector formed by
-	 * its coordinates is 1. This is a rather expensive calculation.
+	 * its coordinates is 1. This is a rather expensive calculation. This specific
+	 * implementation uses quake3's fast inverse square root method.
 	 */
 	public Point normalizeUltra() {
 		double magnitude_squared = 0;
@@ -195,7 +196,7 @@ public class Point {
 			if (positions[i] != 0)
 				positions[i] = 1 / positions[i];
 			else
-				positions[i] = Double.NaN; // WHAT THE FUCK JAVA
+				positions[i] = 0d; // WHAT THE FUCK JAVA
 		return this;
 	}
 

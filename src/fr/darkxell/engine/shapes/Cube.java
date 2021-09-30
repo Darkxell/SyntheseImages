@@ -6,7 +6,7 @@ import fr.darkxell.engine.Point;
 import fr.darkxell.engine.SceneElement;
 import fr.darkxell.utility.MathUtil;
 
-public class Cube implements SceneElement {
+public class Cube extends SceneElement {
 
 	public Point center;
 	public float sizeX;
@@ -26,72 +26,36 @@ public class Cube implements SceneElement {
 		ro = ro.clone().substract(center);
 
 		Point m = rd.clone().oneOn();
-		System.out.println(m);
 		Point n = m.clone().mul(ro);
-		System.out.println(n);
-		Point k = m.clone().abs().mul(boxsize);
-		System.out.println(k);
+		Point k = m.abs().mul(boxsize);
 
 		Point t1 = n.clone().multiply(-1d).substract(k);
-		Point t2 = n.clone().multiply(-1d).add(k);
-		System.out.println("t1 :" + t1);
-		System.out.println("t2 :" + t2);
+		Point t2 = n.multiply(-1d).add(k);
 
 		double tN = MathUtil.ieeemax(MathUtil.ieeemax(t1.x(), t1.y()), t1.z());
 		double tF = MathUtil.ieeemin(MathUtil.ieeemin(t2.x(), t2.y()), t2.z());
 
-		System.out.println(tN + " | " + tF);
-
 		if (tN > tF || tF < 0.0)
 			return Optional.empty();
-
-		// return Optional.of(1f); // // return Optional.of((float)tN);
-
-		if (tN > 0) {
-			System.out.println("ayaya");
-			return Optional.of((float) tN);
-		} else {
-			return Optional.of((float) tF);
-		}
-
-		// return Optional.empty();
+		return Optional.of((tN > 0) ? (float) tN : (float) tF);
 	}
-
-//	@Override
-//	public Optional<Float> intersect(Point ro, Point rd) {
-//		Point boxmin = center.clone().substract(new Point(sizeX / 2, sizeY / 2, sizeZ / 2));
-//		Point boxmax = center.clone().add(new Point(sizeX / 2, sizeY / 2, sizeZ / 2));
-//		System.out.println(boxmin +" / "+boxmax);
-//		double tmin = Double.NEGATIVE_INFINITY, tmax = Double.POSITIVE_INFINITY;
-//
-//		for (int i = 0; i < 3; ++i) {
-//			System.out.println("Computing " + (i+1) + "th dimention");
-//			if (rd.pp()[i] != 0.0d) {
-//				double t1 = (boxmin.pp()[i] - ro.pp()[i]) / rd.pp()[i];
-//				double t2 = (boxmax.pp()[i] - ro.pp()[i]) / rd.pp()[i];
-//
-//				tmin = MathUtil.ieeemax(tmin, MathUtil.ieeemin(t1, t2));
-//				tmax = MathUtil.ieeemin(tmax, MathUtil.ieeemax(t1, t2));
-//				System.out.println("tmax :" + tmax + " | tmin :" + tmin);
-//			} else if (ro.pp()[i] <= boxmin.pp()[i] || ro.pp()[i] >= boxmax.pp()[i]) {
-//				System.out.println("Empty return because : ro[i]=" + ro.pp()[i] + " isn't within boxmin and boxmax ("
-//						+ boxmin.pp()[i] + "->" + boxmax.pp()[i] + ")");
-//				return Optional.empty();
-//			}
-//		}
-//
-//		
-//		if (tmax > tmin && tmax > 0.0) {
-//			System.out.println("tmin:" + tmin);
-//			return Optional.of((float) tmin);
-//		} else {
-//			System.out.println("Empty return.");
-//			return Optional.empty();
-//		}
-//	}
 
 	@Override
 	public Point normal(Point reference) {
+		float halfX = sizeX / 2, halfY = sizeY / 2, halfZ = sizeZ / 2;
+		float cornerpadding = (halfX + halfY + halfZ) / 10000;
+		boolean inaxisX = reference.x() >= center.x() - halfX + cornerpadding
+				&& reference.x() <= center.x() + halfX - cornerpadding;
+		boolean inaxisY = reference.y() >= center.y() - halfY + cornerpadding
+				&& reference.y() <= center.y() + halfY - cornerpadding;
+		boolean inaxisZ = reference.z() >= center.z() - halfZ + cornerpadding
+				&& reference.z() <= center.z() + halfZ - cornerpadding;
+		if (inaxisX && inaxisY && !inaxisZ)
+			return new Point(0, 0, 1);
+		if (inaxisX && !inaxisY && inaxisZ)
+			return new Point(0, 1, 0);
+		if (!inaxisX && inaxisY && inaxisZ)
+			return new Point(1, 0, 0);
 		return reference.clone().substract(center).normalize();
 	}
 

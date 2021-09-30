@@ -39,8 +39,8 @@ public class Scene {
 		for (int i = 0; i < camera.width; ++i)
 			for (int j = 0; j < camera.height; ++j) {
 				Point rasterpixel = camera.rasterPixel(i, j);
-				Point direction = rasterpixel.clone().substract(camera.origin).normalize();
 
+				Point direction = rasterpixel.clone().substract(camera.origin).normalize();
 				// For each element, computes which one this pixel ray intersects
 				float pixeldepth = Float.MAX_VALUE;
 				SceneElement intersectElement = null;
@@ -92,8 +92,10 @@ public class Scene {
 
 					}
 					// print the pixel with intensity
-					int inter = (int) MathUtil.grad255(0.0001f, 8f, (float) totalintensity);
-					g.setColor(new Color(inter, inter, inter));
+					float inter = MathUtil.grad255(0.0001f, 8f, (float) totalintensity) / 255f;
+					Color matcolor = intersectElement.mat.color;
+					g.setColor(new Color((int) (matcolor.getRed() * inter), (int) (matcolor.getGreen() * inter),
+							(int) (matcolor.getBlue() * inter)));
 					g.fillRect(i, j, 1, 1);
 				}
 			}
