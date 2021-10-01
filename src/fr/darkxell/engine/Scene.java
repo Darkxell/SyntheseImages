@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
 
+import fr.darkxell.engine.materials.Material;
 import fr.darkxell.utility.MathUtil;
 import fr.darkxell.utility.PairTemplate;
 
@@ -42,7 +43,7 @@ public class Scene {
 		g.setColor(Color.BLACK);
 		for (int i = 0; i < camera.width; ++i) {
 			for (int j = 0; j < camera.height; ++j) {
-				g.setColor(computePixelFor(i, j));
+				g.setColor(computePixelForRaster(i, j));
 				g.fillRect(i, j, 1, 1);
 			}
 			if (i % 37 == 0)
@@ -55,37 +56,50 @@ public class Scene {
 		return img;
 	}
 
-	private Color computePixelFor(int i, int j) {
+	private Color computePixelForRaster(int i, int j) {
 		float toreturn_r = 0, toreturn_g = 0, toreturn_b = 0;
 		float aliasingmultiplier = 1f / camera.antialiasing;
 		for (int aliasingcounter = 0; aliasingcounter < camera.antialiasing; ++aliasingcounter) {
 			Point rasterpixel = camera.rasterPixel(i, j);
 			Point direction = rasterpixel.clone().substract(camera.origin).normalize();
-			PairTemplate<Float, SceneElement> hit = hitScan(camera.origin, direction);
-			float pixeldepth = hit == null ? Float.MAX_VALUE : hit.left;
-			SceneElement intersectElement = hit == null ? null : hit.right;
-
-			// For each light, compute the intensity of that light on the given point.
-			double totalintensity = 0d;
-			if (intersectElement == null) {
-				toreturn_r += skyboxerrorcolor.getRed() * aliasingmultiplier;
-				toreturn_g += skyboxerrorcolor.getGreen() * aliasingmultiplier;
-				toreturn_b += skyboxerrorcolor.getBlue() * aliasingmultiplier;
-			} else {
-				for (int l = 0; l < lights.size(); ++l) {
-					Point collision = direction.clone().multiply(pixeldepth).add(camera.origin);
-					Point normal = intersectElement.normal(collision);
-					totalintensity += computeLightOnElement(lights.get(l), collision, normal);
-				}
-				// print the pixel with intensity
-				float inter = MathUtil.grad255(0.0001f, 8f, (float) totalintensity) / 255f;
-				Color matcolor = intersectElement.mat.color;
-				toreturn_r += matcolor.getRed() * inter * aliasingmultiplier;
-				toreturn_g += matcolor.getGreen() * inter * aliasingmultiplier;
-				toreturn_b += matcolor.getBlue() * inter * aliasingmultiplier;
-			}
+			Color aapixel = computePixelFor(camera.origin, direction, camera.refractions);
+			toreturn_r += aapixel.getRed() * aliasingmultiplier;
+			toreturn_g += aapixel.getGreen() * aliasingmultiplier;
+			toreturn_b += aapixel.getBlue() * aliasingmultiplier;
 		}
 		return new Color((int) toreturn_r, (int) toreturn_g, (int) toreturn_b);
+	}
+
+	private Color computePixelFor(Point v_ori, Point v_dir, int recursion) {
+		PairTemplate<Float, SceneElement> hit = hitScan(v_ori, v_dir);
+		float pixeldepth = hit == null ? Float.MAX_VALUE : hit.left;
+		SceneElement intersectElement = hit == null ? null : hit.right;
+		if (intersectElement == null) {
+			return skyboxerrorcolor;
+		}
+
+		switch (intersectElement.mat.reflection) {
+		case Material.REFLECTION_TRANSPARENT:
+			return skyboxerrorcolor;
+		// break;
+		case Material.REFLECTION_REFLECTIVE:
+			if (recursion >= 0) {
+				computePixelFor(v_ori, v_dir, recursion - 1);
+				break;
+			} // If recursion is over, behave as a regular material
+		case Material.REFLECTION_MAT:
+			double totalintensity = 0d;
+			for (int l = 0; l < lights.size(); ++l) {
+				Point collision = v_dir.clone().multiply(pixeldepth).add(v_ori);
+				Point normal = intersectElement.normal(collision);
+				totalintensity += computeLightOnElement(lights.get(l), collision, normal);
+			}
+			float inter = MathUtil.grad255(0.0001f, 8f, (float) totalintensity) / 255f;
+			Color matcolor = intersectElement.mat.color;
+			return new Color((int) (matcolor.getRed() * inter), (int) (matcolor.getGreen() * inter),
+					(int) (matcolor.getBlue() * inter));
+		}
+		return skyboxerrorcolor;
 	}
 
 	/** Returns the intensity of a light on a given point */

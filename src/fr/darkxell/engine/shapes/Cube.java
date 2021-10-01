@@ -22,7 +22,7 @@ public class Cube extends SceneElement {
 
 	@Override
 	public Optional<Float> intersect(Point ro, Point rd) {
-		Point boxsize = new Point(sizeX, sizeY, sizeZ);
+		Point boxsize = new Point(sizeX/2, sizeY/2, sizeZ/2);
 		ro = ro.clone().substract(center);
 
 		Point m = rd.clone().oneOn();

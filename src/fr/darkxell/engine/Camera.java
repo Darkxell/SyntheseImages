@@ -20,6 +20,11 @@ public class Camera {
 	public int height = 130;
 	/** number of iterations on one pixel */
 	public int antialiasing = ANTIALIASING_OFF;
+	/**
+	 * Numbers of reflections/refractions recursions this camera checks to render a
+	 * scene
+	 */
+	public int refractions = 4;
 
 	public Camera(Point origin, Point rasterOrigin) {
 		this.origin = origin;
@@ -36,7 +41,7 @@ public class Camera {
 	public Point rasterPixel(int x, int y) {
 		double aliasingX = antialiasing > ANTIALIASING_OFF ? rand.nextDouble() - 0.5d : 0d,
 				aliasingY = antialiasing > ANTIALIASING_OFF ? rand.nextDouble() - 0.5d : 0d;
-		double theta = fov / width;
+		double theta = fov * 2 / width;
 		double imod = x - width / 2 + aliasingX, jmod = y - height / 2 + aliasingY;
 		double ti0 = imod * theta, tj0 = jmod * theta;
 		double rasterIX = rasterOrigin.x() - (1 - Math.cos(ti0));

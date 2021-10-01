@@ -102,6 +102,11 @@ public class Point {
 		// this.dim
 	}
 
+	/**
+	 * Multiplies this Point value by value with the given point.
+	 * 
+	 * @return a pointer to this point.
+	 */
 	public Point mul(Point p) {
 		int maxlength = Math.max(p.getDimention(), this.getDimention());
 		double[] toreturn = new double[maxlength];

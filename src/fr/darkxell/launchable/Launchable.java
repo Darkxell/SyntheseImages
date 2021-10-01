@@ -28,25 +28,33 @@ public class Launchable {
 //		gc.print("Hello world!");
 
 		Scene scene = new Scene();
-		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0.0000001d));
+		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0.0000001d, 0.0000001d));
 		scene.camera.width = 200;
-		scene.camera.height = 130;
+		scene.camera.height = 120;
 		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
-		Sphere s = new Sphere(new Point(15d, 0d, 1.3d), 1.6f);
+		
+		scene.elements.add(new Cube(new Point(12.5d, 0d, 6d), 6f,6f, 6f));
+		scene.elements.add(new Cube(new Point(12.5d, 0d, -6d), 6f,6f, 6f));
+		scene.elements.add(new Cube(new Point(12.5d, 6d, 0d), 6f,6f, 6f));
+		scene.elements.add(new Cube(new Point(12.5d, -6d, 0d), 6f,6f, 6f));
+		
+		scene.elements.add(new Cube(new Point(18.5d, 0d, 0d), 6f,6f, 6f));
+		
+		Sphere s = new Sphere(new Point(12d, 0d, 1.3d), 1.6f);
 		s.mat.color = new Color(255, 189, 114);
 		scene.elements.add(s);
 		
-		s = new Sphere(new Point(17d, 0.5d, -0.7d), 1.2f);
+		s = new Sphere(new Point(14.5d, 0.5d, -0.7d), 1.2f);
 		s.mat.color = new Color(163, 255, 248);
 		scene.elements.add(s);
 		
-		scene.elements.add(new Cube(new Point(14d, 2.1d, -1.2d), 0.7f, 0.7f, 0.7f));
+		scene.elements.add(new Cube(new Point(13.1d, 2.05d, -1.8d), 0.7f, 0.7f, 0.7f));
 		
-		scene.lights.add(new LightSource(new Point(15d, -1d, -3d)));
-		scene.elements.add(new Sphere(new Point(15d, -1.4d, -3d), 0.15f));
+		scene.lights.add(new LightSource(new Point(11d, -1d, -2d)));
+		scene.elements.add(new Sphere(new Point(11d, -1.4d, -2d), 0.15f));
 
-		scene.lights.add(new LightSource(new Point(15d, 1.8d, 2.5d), 30));
-		scene.elements.add(new Sphere(new Point(15d, 2d, 2.5d), 0.15f));
+		scene.lights.add(new LightSource(new Point(10d, 1.8d, 2.5d), 30));
+		scene.elements.add(new Sphere(new Point(10d, 2d, 2.5d), 0.15f));
 
 		BufferedImage img = scene.render();
 		Filesutility.saveImage(img);
