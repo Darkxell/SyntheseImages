@@ -29,8 +29,9 @@ public class Launchable {
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0.0000001d));
-		scene.camera.width = 200 * 4;
-		scene.camera.height = 130 * 4;
+		scene.camera.width = 200;
+		scene.camera.height = 130;
+		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
 		Sphere s = new Sphere(new Point(15d, 0d, 1.3d), 1.6f);
 		s.mat.color = new Color(255, 189, 114);
 		scene.elements.add(s);

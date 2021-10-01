@@ -27,80 +27,100 @@ public class Scene {
 		this.lights = new ArrayList<>(5);
 	}
 
+	private Random rand = new Random();
+
+	private Color skyboxerrorcolor = Color.PINK;
+
 	public BufferedImage render() {
-		Random rand = new Random();
 		long start = System.currentTimeMillis();
+		System.out.println("Render started in thread " + Thread.currentThread().getName() + "... Processing.");
 		BufferedImage img = new BufferedImage(camera.width, camera.height, BufferedImage.TYPE_INT_RGB);
 		Graphics g = img.createGraphics();
-		g.setColor(Color.PINK);
+		g.setColor(skyboxerrorcolor);
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		g.setColor(Color.BLACK);
-
-		for (int i = 0; i < camera.width; ++i)
+		for (int i = 0; i < camera.width; ++i) {
 			for (int j = 0; j < camera.height; ++j) {
-				Point rasterpixel = camera.rasterPixel(i, j);
+				g.setColor(computePixelFor(i, j));
+				g.fillRect(i, j, 1, 1);
+			}
+			if (i % 37 == 0)
+				System.out.println("Rendered " + i + "/" + img.getWidth() + " columns so far ("
+						+ ((float) i / (float) img.getWidth() * 100) + "%)");
+		}
+		g.dispose();
+		System.out.println("Render complete in " + ((System.currentTimeMillis() - start) / 1000d)
+				+ " seconds for thread " + Thread.currentThread().getName() + ".");
+		return img;
+	}
 
-				Point direction = rasterpixel.clone().substract(camera.origin).normalize();
-				// For each element, computes which one this pixel ray intersects
-				float pixeldepth = Float.MAX_VALUE;
-				SceneElement intersectElement = null;
-				for (int k = 0; k < elements.size(); k++) {
-					Optional<Float> intersect = elements.get(k).intersect(camera.origin, direction);
-					if (!intersect.isEmpty() && intersect.get().floatValue() > 0
-							&& pixeldepth > intersect.get().floatValue()) {
-						intersectElement = elements.get(k);
-						pixeldepth = intersect.get().floatValue();
-					}
-				}
-
-				// For each light, compute the intensity of that light on the given point.
-				double totalintensity = 0d;
-				if (intersectElement != null) {
-					for (int l = 0; l < lights.size(); ++l) {
-						Point collision = direction.clone().multiply(pixeldepth).add(camera.origin);
-						// Iterate N times on values next to the light source
-						for (int liter = 0; liter < lights.get(l).fuzziness; ++liter) {
-							Point rdev = new Point(rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius,
-									rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius,
-									rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius);
-							Point efflightpose = lights.get(l).pos.clone().add(rdev);
-							// Normalised vector containing the direction from the collision vector towards
-							// the light
-							Point lightdirection = efflightpose.clone().substract(collision).normalize();
-							// Small padding towards the light to avoid collision with the element that
-							// started the ray
-							Point collisionpadded = collision.clone().add(lightdirection.clone().multiply(0.01d));
-							boolean isblocked = false;
-							for (int m = 0; m < elements.size(); m++) {
-								Optional<Float> lightersect = elements.get(m).intersect(collisionpadded,
-										lightdirection);
-								if (!lightersect.isEmpty() && Math.pow(lightersect.get().floatValue(), 2) < efflightpose
-										.clone().substract(collisionpadded).normSquared()) {
-									isblocked = true;
-									break;
-								}
-							}
-							if (!isblocked) {
-								double lighting = (Math
-										.abs(intersectElement.normal(collision).scalarproduct(lightdirection))
-										* lights.get(l).intensity)
-										/ (Math.PI * collision.clone().substract(lights.get(l).pos).norm());
-								totalintensity += lighting / lights.get(l).fuzziness;
-							}
-						}
-
-					}
-					// print the pixel with intensity
-					float inter = MathUtil.grad255(0.0001f, 8f, (float) totalintensity) / 255f;
-					Color matcolor = intersectElement.mat.color;
-					g.setColor(new Color((int) (matcolor.getRed() * inter), (int) (matcolor.getGreen() * inter),
-							(int) (matcolor.getBlue() * inter)));
-					g.fillRect(i, j, 1, 1);
+	private Color computePixelFor(int i, int j) {
+		float toreturn_r = 0, toreturn_g = 0, toreturn_b = 0;
+		float aliasingmultiplier = 1f / camera.antialiasing;
+		for (int aliasingcounter = 0; aliasingcounter < camera.antialiasing; ++aliasingcounter) {
+			Point rasterpixel = camera.rasterPixel(i, j);
+			Point direction = rasterpixel.clone().substract(camera.origin).normalize();
+			// For each element, computes which one this pixel ray intersects
+			float pixeldepth = Float.MAX_VALUE;
+			SceneElement intersectElement = null;
+			for (int k = 0; k < elements.size(); k++) {
+				Optional<Float> intersect = elements.get(k).intersect(camera.origin, direction);
+				if (!intersect.isEmpty() && intersect.get().floatValue() > 0
+						&& pixeldepth > intersect.get().floatValue()) {
+					intersectElement = elements.get(k);
+					pixeldepth = intersect.get().floatValue();
 				}
 			}
-		g.dispose();
-		System.out.println("Render complete in " + ((System.currentTimeMillis() - start) / 1000d) + " seconds");
-		return img;
+
+			// For each light, compute the intensity of that light on the given point.
+			double totalintensity = 0d;
+			if (intersectElement == null) {
+				toreturn_r += skyboxerrorcolor.getRed() * aliasingmultiplier;
+				toreturn_g += skyboxerrorcolor.getGreen() * aliasingmultiplier;
+				toreturn_b += skyboxerrorcolor.getBlue() * aliasingmultiplier;
+			} else {
+				for (int l = 0; l < lights.size(); ++l) {
+					Point collision = direction.clone().multiply(pixeldepth).add(camera.origin);
+					// Iterate N times on values next to the light source
+					for (int liter = 0; liter < lights.get(l).fuzziness; ++liter) {
+						Point rdev = new Point(rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius,
+								rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius,
+								rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius);
+						Point efflightpose = lights.get(l).pos.clone().add(rdev);
+						// Normalised vector containing the direction from the collision vector towards
+						// the light
+						Point lightdirection = efflightpose.clone().substract(collision).normalize();
+						// Small padding towards the light to avoid collision with the element that
+						// started the ray
+						Point collisionpadded = collision.clone().add(lightdirection.clone().multiply(0.01d));
+						boolean isblocked = false;
+						for (int m = 0; m < elements.size(); m++) {
+							Optional<Float> lightersect = elements.get(m).intersect(collisionpadded, lightdirection);
+							if (!lightersect.isEmpty() && Math.pow(lightersect.get().floatValue(), 2) < efflightpose
+									.clone().substract(collisionpadded).normSquared()) {
+								isblocked = true;
+								break;
+							}
+						}
+						if (!isblocked) {
+							double lighting = (Math
+									.abs(intersectElement.normal(collision).scalarproduct(lightdirection))
+									* lights.get(l).intensity)
+									/ (Math.PI * collision.clone().substract(lights.get(l).pos).norm());
+							totalintensity += lighting / lights.get(l).fuzziness;
+						}
+					}
+
+				}
+				// print the pixel with intensity
+				float inter = MathUtil.grad255(0.0001f, 8f, (float) totalintensity) / 255f;
+				Color matcolor = intersectElement.mat.color;
+				toreturn_r += matcolor.getRed() * inter * aliasingmultiplier;
+				toreturn_g += matcolor.getGreen() * inter * aliasingmultiplier;
+				toreturn_b += matcolor.getBlue() * inter * aliasingmultiplier;
+			}
+		}
+		return new Color((int) toreturn_r, (int) toreturn_g, (int) toreturn_b);
 	}
 
 }
