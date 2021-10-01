@@ -7,6 +7,7 @@ public class Camera {
 	public static final int ANTIALIASING_OFF = 1;
 	public static final int ANTIALIASING_2X = 2;
 	public static final int ANTIALIASING_8X = 8;
+	public static final int ANTIALIASING_16X = 16;
 	public static final int ANTIALIASING_32X = 32;
 	public static final int ANTIALIASING_128X = 128;
 

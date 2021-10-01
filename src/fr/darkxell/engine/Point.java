@@ -248,7 +248,7 @@ public class Point {
 
 	@Override
 	public String toString() {
-		String toreturn = "Point in dim:" + this.getDimention() + " [";
+		String toreturn = "[dim=" + this.getDimention() + ":";
 		for (int i = 0; i < this.getDimention(); i++)
 			toreturn += i == 0 ? (float) this.getN(i) : "," + (float) this.getN(i);
 		return toreturn + "]";

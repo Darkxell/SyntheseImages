@@ -74,9 +74,8 @@ public class Scene {
 		PairTemplate<Float, SceneElement> hit = hitScan(v_ori, v_dir);
 		float pixeldepth = hit == null ? Float.MAX_VALUE : hit.left;
 		SceneElement intersectElement = hit == null ? null : hit.right;
-		if (intersectElement == null) {
+		if (intersectElement == null) 
 			return skyboxerrorcolor;
-		}
 
 		Point collision = v_dir.clone().multiply(pixeldepth).add(v_ori);
 		Point normal = intersectElement.normal(collision);
@@ -87,7 +86,6 @@ public class Scene {
 		case Material.REFLECTION_REFLECTIVE:
 			if (recursion >= 0) {
 				Point reflection = v_dir.reflection(normal);
-				System.out.println( "Reflection : " + reflection + " for direction vector " + v_dir + "(normal was " + normal + ")");
 				collision.add(reflection.clone().multiply(0.001d));
 				return computePixelFor(collision, reflection, recursion - 1);
 			} // If recursion is over, behave as a regular material
@@ -99,6 +97,8 @@ public class Scene {
 			Color matcolor = intersectElement.mat.color;
 			return new Color((int) (matcolor.getRed() * inter), (int) (matcolor.getGreen() * inter),
 					(int) (matcolor.getBlue() * inter));
+		case Material.REFLECTION_GLOWY:
+			return intersectElement.mat.color;
 		}
 		System.err.println("Material error, returning skybox error color");
 		return skyboxerrorcolor;
@@ -145,7 +145,7 @@ public class Scene {
 		float pixeldepth = Float.MAX_VALUE;
 		SceneElement intersectElement = null;
 		for (int k = 0; k < elements.size(); k++) {
-			Optional<Float> intersect = elements.get(k).intersect(camera.origin, rayDir);
+			Optional<Float> intersect = elements.get(k).intersect(rayOri, rayDir);
 			if (!intersect.isEmpty() && intersect.get().floatValue() > 0 && pixeldepth > intersect.get().floatValue()) {
 				intersectElement = elements.get(k);
 				pixeldepth = intersect.get().floatValue();

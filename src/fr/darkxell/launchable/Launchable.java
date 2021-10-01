@@ -30,8 +30,8 @@ public class Launchable {
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0.0000001d, 0.0000001d));
-		scene.camera.width = 100;
-		scene.camera.height = 60;
+		scene.camera.width = 200;
+		scene.camera.height = 120  ;
 		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
 		
 		scene.elements.add(new Cube(new Point(12.5d, 0d, 6d), 6f,6f, 6f));
@@ -51,6 +51,11 @@ public class Launchable {
 		scene.elements.add(s);
 		
 		scene.elements.add(new Cube(new Point(13.1d, 2.05d, -1.8d), 0.7f, 0.7f, 0.7f));
+		
+		Cube c = new Cube(new Point(-201d, 0d, 0d), 200f, 200f, 200f);
+		c.mat.reflection = Material.REFLECTION_GLOWY;
+		c.mat.color = Color.RED;
+		scene.elements.add(c);
 		
 		scene.lights.add(new LightSource(new Point(11d, -1d, -2d)));
 		scene.elements.add(new Sphere(new Point(11d, -1.4d, -2d), 0.15f));
