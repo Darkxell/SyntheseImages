@@ -29,9 +29,14 @@ public class Launchable {
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0.0000001d));
-		scene.elements.add(new Sphere(new Point(15d, 0d, 1d), 1.6f));
-		Sphere s = new Sphere(new Point(16d, 0.5d, -0.5d), 1.2f);
-		s.mat.color = Color.GREEN;
+		scene.camera.width = 200 * 4;
+		scene.camera.height = 130 * 4;
+		Sphere s = new Sphere(new Point(15d, 0d, 1.3d), 1.6f);
+		s.mat.color = new Color(255, 189, 114);
+		scene.elements.add(s);
+		
+		s = new Sphere(new Point(17d, 0.5d, -0.7d), 1.2f);
+		s.mat.color = new Color(163, 255, 248);
 		scene.elements.add(s);
 		
 		scene.elements.add(new Cube(new Point(14d, 2.1d, -1.2d), 0.7f, 0.7f, 0.7f));

@@ -10,6 +10,11 @@ public class LightSource {
 	public int intensity = 100;
 	/** radius of the source */
 	public double radius = 0.2;
+	/**
+	 * The amount of iterations this light does to calculate if a point is lit or
+	 * not
+	 */
+	public int fuzziness = 20;
 
 	public LightSource(Point p) {
 		this.pos = p;

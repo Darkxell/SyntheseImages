@@ -4,7 +4,11 @@ import java.awt.Color;
 
 public class Material {
 
-	public Color color = Color.WHITE;
+	public static final byte REFLECTION_MAT = 0;
+	public static final byte REFLECTION_REFLECTIVE = 1;
+	public static final byte REFLECTION_TRANSPARENT = 2;
 	
+	public Color color = Color.WHITE;
+	public byte reflection = REFLECTION_MAT;
 	
 }

@@ -57,10 +57,9 @@ public class Scene {
 				double totalintensity = 0d;
 				if (intersectElement != null) {
 					for (int l = 0; l < lights.size(); ++l) {
-						final int fuzzylightiterations = 20;
 						Point collision = direction.clone().multiply(pixeldepth).add(camera.origin);
 						// Iterate N times on values next to the light source
-						for (int liter = 0; liter < fuzzylightiterations; ++liter) {
+						for (int liter = 0; liter < lights.get(l).fuzziness; ++liter) {
 							Point rdev = new Point(rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius,
 									rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius,
 									rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius);
@@ -86,7 +85,7 @@ public class Scene {
 										.abs(intersectElement.normal(collision).scalarproduct(lightdirection))
 										* lights.get(l).intensity)
 										/ (Math.PI * collision.clone().substract(lights.get(l).pos).norm());
-								totalintensity += lighting / fuzzylightiterations;
+								totalintensity += lighting / lights.get(l).fuzziness;
 							}
 						}
 
