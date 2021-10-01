@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import fr.darkxell.utility.MathUtil;
+import fr.darkxell.utility.PairTemplate;
 
 public class Scene {
 
@@ -60,17 +61,9 @@ public class Scene {
 		for (int aliasingcounter = 0; aliasingcounter < camera.antialiasing; ++aliasingcounter) {
 			Point rasterpixel = camera.rasterPixel(i, j);
 			Point direction = rasterpixel.clone().substract(camera.origin).normalize();
-			// For each element, computes which one this pixel ray intersects
-			float pixeldepth = Float.MAX_VALUE;
-			SceneElement intersectElement = null;
-			for (int k = 0; k < elements.size(); k++) {
-				Optional<Float> intersect = elements.get(k).intersect(camera.origin, direction);
-				if (!intersect.isEmpty() && intersect.get().floatValue() > 0
-						&& pixeldepth > intersect.get().floatValue()) {
-					intersectElement = elements.get(k);
-					pixeldepth = intersect.get().floatValue();
-				}
-			}
+			PairTemplate<Float, SceneElement> hit = hitScan(camera.origin, direction);
+			float pixeldepth = hit == null ? Float.MAX_VALUE : hit.left;
+			SceneElement intersectElement = hit == null ? null : hit.right;
 
 			// For each light, compute the intensity of that light on the given point.
 			double totalintensity = 0d;
@@ -81,36 +74,8 @@ public class Scene {
 			} else {
 				for (int l = 0; l < lights.size(); ++l) {
 					Point collision = direction.clone().multiply(pixeldepth).add(camera.origin);
-					// Iterate N times on values next to the light source
-					for (int liter = 0; liter < lights.get(l).fuzziness; ++liter) {
-						Point rdev = new Point(rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius,
-								rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius,
-								rand.nextDouble() * lights.get(l).radius * 2 - lights.get(l).radius);
-						Point efflightpose = lights.get(l).pos.clone().add(rdev);
-						// Normalised vector containing the direction from the collision vector towards
-						// the light
-						Point lightdirection = efflightpose.clone().substract(collision).normalize();
-						// Small padding towards the light to avoid collision with the element that
-						// started the ray
-						Point collisionpadded = collision.clone().add(lightdirection.clone().multiply(0.01d));
-						boolean isblocked = false;
-						for (int m = 0; m < elements.size(); m++) {
-							Optional<Float> lightersect = elements.get(m).intersect(collisionpadded, lightdirection);
-							if (!lightersect.isEmpty() && Math.pow(lightersect.get().floatValue(), 2) < efflightpose
-									.clone().substract(collisionpadded).normSquared()) {
-								isblocked = true;
-								break;
-							}
-						}
-						if (!isblocked) {
-							double lighting = (Math
-									.abs(intersectElement.normal(collision).scalarproduct(lightdirection))
-									* lights.get(l).intensity)
-									/ (Math.PI * collision.clone().substract(lights.get(l).pos).norm());
-							totalintensity += lighting / lights.get(l).fuzziness;
-						}
-					}
-
+					Point normal = intersectElement.normal(collision);
+					totalintensity += computeLightOnElement(lights.get(l), collision, normal);
 				}
 				// print the pixel with intensity
 				float inter = MathUtil.grad255(0.0001f, 8f, (float) totalintensity) / 255f;
@@ -121,6 +86,59 @@ public class Scene {
 			}
 		}
 		return new Color((int) toreturn_r, (int) toreturn_g, (int) toreturn_b);
+	}
+
+	/** Returns the intensity of a light on a given point */
+	private double computeLightOnElement(LightSource ls, Point point, Point normal) {
+		double toreturn = 0d;
+		// Iterate N times on values next to the light source
+		for (int liter = 0; liter < ls.fuzziness; ++liter) {
+			Point rdev = new Point(rand.nextDouble() * ls.radius * 2 - ls.radius,
+					rand.nextDouble() * ls.radius * 2 - ls.radius, rand.nextDouble() * ls.radius * 2 - ls.radius);
+			Point efflightpose = ls.pos.clone().add(rdev);
+			// Normalized vector containing the direction from the collision vector towards
+			// the light
+			Point lightdirection = efflightpose.clone().substract(point).normalize();
+			// Small padding towards the light to avoid collision with the element that
+			// started the ray
+			Point collisionpadded = point.clone().add(lightdirection.clone().multiply(0.01d));
+			boolean isblocked = false;
+			for (int m = 0; m < elements.size(); m++) {
+				Optional<Float> lightersect = elements.get(m).intersect(collisionpadded, lightdirection);
+				if (!lightersect.isEmpty() && Math.pow(lightersect.get().floatValue(), 2) < efflightpose.clone()
+						.substract(collisionpadded).normSquared()) {
+					isblocked = true;
+					break;
+				}
+			}
+			if (!isblocked) {
+				double lighting = (Math.abs(normal.scalarproduct(lightdirection)) * ls.intensity)
+						/ (Math.PI * point.clone().substract(ls.pos).norm());
+				toreturn += lighting / ls.fuzziness;
+			}
+		}
+		return toreturn;
+	}
+
+	/**
+	 * @return a Pair of distance + Element if this ray hits something in this
+	 *         scene. null if it hits nothing. If the ray hits multiple elements,
+	 *         this method returns the one with the closest hit to the origin point.
+	 */
+	private PairTemplate<Float, SceneElement> hitScan(Point rayOri, Point rayDir) {
+		float pixeldepth = Float.MAX_VALUE;
+		SceneElement intersectElement = null;
+		for (int k = 0; k < elements.size(); k++) {
+			Optional<Float> intersect = elements.get(k).intersect(camera.origin, rayDir);
+			if (!intersect.isEmpty() && intersect.get().floatValue() > 0 && pixeldepth > intersect.get().floatValue()) {
+				intersectElement = elements.get(k);
+				pixeldepth = intersect.get().floatValue();
+			}
+		}
+		if (intersectElement != null)
+			return new PairTemplate<>(pixeldepth, intersectElement);
+		else
+			return null;
 	}
 
 }
