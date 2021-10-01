@@ -196,6 +196,17 @@ public class Point {
 		return scalarproduct;
 	}
 
+	/**
+	 * This method does not modify this object or the parsed one, and returns a new
+	 * Point with its own memory allocation.
+	 * 
+	 * @return the reflection of this vector according to a normal.
+	 */
+	public Point reflection(Point normal) {
+		Point n2i = normal.clone().multiply(this.scalarproduct(normal) * 2f);
+		return this.clone().substract(n2i);
+	}
+
 	public Point oneOn() {
 		for (int i = 0; i < positions.length; i++)
 			if (positions[i] != 0)
@@ -239,7 +250,7 @@ public class Point {
 	public String toString() {
 		String toreturn = "Point in dim:" + this.getDimention() + " [";
 		for (int i = 0; i < this.getDimention(); i++)
-			toreturn += i == 0 ? this.getN(i) : "," + this.getN(i);
+			toreturn += i == 0 ? (float) this.getN(i) : "," + (float) this.getN(i);
 		return toreturn + "]";
 	}
 }

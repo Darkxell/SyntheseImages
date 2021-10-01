@@ -7,6 +7,7 @@ import fr.darkxell.engine.Camera;
 import fr.darkxell.engine.LightSource;
 import fr.darkxell.engine.Point;
 import fr.darkxell.engine.Scene;
+import fr.darkxell.engine.materials.Material;
 import fr.darkxell.engine.shapes.Cube;
 import fr.darkxell.engine.shapes.Sphere;
 import fr.darkxell.utility.Filesutility;
@@ -29,8 +30,8 @@ public class Launchable {
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0.0000001d, 0.0000001d));
-		scene.camera.width = 200;
-		scene.camera.height = 120;
+		scene.camera.width = 100;
+		scene.camera.height = 60;
 		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
 		
 		scene.elements.add(new Cube(new Point(12.5d, 0d, 6d), 6f,6f, 6f));
@@ -46,6 +47,7 @@ public class Launchable {
 		
 		s = new Sphere(new Point(14.5d, 0.5d, -0.7d), 1.2f);
 		s.mat.color = new Color(163, 255, 248);
+		s.mat.reflection = Material.REFLECTION_REFLECTIVE;
 		scene.elements.add(s);
 		
 		scene.elements.add(new Cube(new Point(13.1d, 2.05d, -1.8d), 0.7f, 0.7f, 0.7f));

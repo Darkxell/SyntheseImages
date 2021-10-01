@@ -78,27 +78,29 @@ public class Scene {
 			return skyboxerrorcolor;
 		}
 
+		Point collision = v_dir.clone().multiply(pixeldepth).add(v_ori);
+		Point normal = intersectElement.normal(collision);
 		switch (intersectElement.mat.reflection) {
 		case Material.REFLECTION_TRANSPARENT:
 			return skyboxerrorcolor;
 		// break;
 		case Material.REFLECTION_REFLECTIVE:
 			if (recursion >= 0) {
-				computePixelFor(v_ori, v_dir, recursion - 1);
-				break;
+				Point reflection = v_dir.reflection(normal);
+				System.out.println( "Reflection : " + reflection + " for direction vector " + v_dir + "(normal was " + normal + ")");
+				collision.add(reflection.clone().multiply(0.001d));
+				return computePixelFor(collision, reflection, recursion - 1);
 			} // If recursion is over, behave as a regular material
 		case Material.REFLECTION_MAT:
 			double totalintensity = 0d;
-			for (int l = 0; l < lights.size(); ++l) {
-				Point collision = v_dir.clone().multiply(pixeldepth).add(v_ori);
-				Point normal = intersectElement.normal(collision);
+			for (int l = 0; l < lights.size(); ++l)
 				totalintensity += computeLightOnElement(lights.get(l), collision, normal);
-			}
 			float inter = MathUtil.grad255(0.0001f, 8f, (float) totalintensity) / 255f;
 			Color matcolor = intersectElement.mat.color;
 			return new Color((int) (matcolor.getRed() * inter), (int) (matcolor.getGreen() * inter),
 					(int) (matcolor.getBlue() * inter));
 		}
+		System.err.println("Material error, returning skybox error color");
 		return skyboxerrorcolor;
 	}
 
@@ -115,7 +117,7 @@ public class Scene {
 			Point lightdirection = efflightpose.clone().substract(point).normalize();
 			// Small padding towards the light to avoid collision with the element that
 			// started the ray
-			Point collisionpadded = point.clone().add(lightdirection.clone().multiply(0.01d));
+			Point collisionpadded = point.clone().add(lightdirection.clone().multiply(0.001d));
 			boolean isblocked = false;
 			for (int m = 0; m < elements.size(); m++) {
 				Optional<Float> lightersect = elements.get(m).intersect(collisionpadded, lightdirection);
