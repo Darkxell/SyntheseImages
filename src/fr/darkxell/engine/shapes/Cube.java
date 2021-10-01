@@ -42,21 +42,35 @@ public class Cube extends SceneElement {
 
 	@Override
 	public Point normal(Point reference) {
-		float halfX = sizeX / 2, halfY = sizeY / 2, halfZ = sizeZ / 2;
-		float cornerpadding = (halfX + halfY + halfZ) / 10000;
-		boolean inaxisX = reference.x() >= center.x() - halfX + cornerpadding
-				&& reference.x() <= center.x() + halfX - cornerpadding;
-		boolean inaxisY = reference.y() >= center.y() - halfY + cornerpadding
-				&& reference.y() <= center.y() + halfY - cornerpadding;
-		boolean inaxisZ = reference.z() >= center.z() - halfZ + cornerpadding
-				&& reference.z() <= center.z() + halfZ - cornerpadding;
-		if (inaxisX && inaxisY && !inaxisZ)
-			return new Point(0, 0, 1);
-		if (inaxisX && !inaxisY && inaxisZ)
-			return new Point(0, 1, 0);
-		if (!inaxisX && inaxisY && inaxisZ)
-			return new Point(1, 0, 0);
-		return reference.clone().substract(center).normalize();
+		boolean iscube = sizeX == sizeY && sizeX == sizeZ;
+		// If the box is a cube, we can calculate the sphere normal and snap it to the
+		// closest normal orthographic vector.
+		if (iscube) {
+			Point ssph = reference.clone().substract(center).normalize();
+			if (Math.abs(ssph.x()) >= Math.abs(ssph.y()) && Math.abs(ssph.x()) >= Math.abs(ssph.z()))
+				return new Point(ssph.x() >= 0 ? 1 : -1, 0, 0);
+			if (Math.abs(ssph.y()) >= Math.abs(ssph.x()) && Math.abs(ssph.y()) >= Math.abs(ssph.z()))
+				return new Point(0, ssph.y() >= 0 ? 1 : -1, 0);
+			return new Point(0, 0, ssph.z() >= 0 ? 1 : -1);
+		} else {
+			// FIXME: this garbage apparently doesn't always work. Corner padding seems way
+			// too big and offset far from 0,0,0. Left to investigate.
+			float halfX = sizeX / 2, halfY = sizeY / 2, halfZ = sizeZ / 2;
+			float cornerpadding = (halfX + halfY + halfZ) / 10000;
+			boolean inaxisX = reference.x() >= center.x() - halfX + cornerpadding
+					&& reference.x() <= center.x() + halfX - cornerpadding;
+			boolean inaxisY = reference.y() >= center.y() - halfY + cornerpadding
+					&& reference.y() <= center.y() + halfY - cornerpadding;
+			boolean inaxisZ = reference.z() >= center.z() - halfZ + cornerpadding
+					&& reference.z() <= center.z() + halfZ - cornerpadding;
+			if (inaxisX && inaxisY && !inaxisZ)
+				return new Point(0, 0, 1);
+			if (inaxisX && !inaxisY && inaxisZ)
+				return new Point(0, 1, 0);
+			if (!inaxisX && inaxisY && inaxisZ)
+				return new Point(1, 0, 0);
+			return reference.clone().substract(center).normalize();
+		}
 	}
 
 }
