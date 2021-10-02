@@ -24,5 +24,11 @@ public class LightSource {
 		this.pos = p;
 		this.intensity = intensity;
 	}
+	
+	public LightSource(Point p, int intensity, int fuzziness) {
+		this.pos = p;
+		this.intensity = intensity;
+		this.fuzziness = fuzziness;
+	}
 
 }

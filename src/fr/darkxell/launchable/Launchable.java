@@ -15,7 +15,7 @@ import fr.darkxell.front.GraphConsole;
 public class Launchable {
 
 	public static GraphConsole gc;
-	
+
 	public static void main(String[] args) {
 
 //		String s = Filesutility.readFile("C:\\Users\\ncandela\\Desktop\\docs\\test.txt");
@@ -27,12 +27,16 @@ public class Launchable {
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0.0000001d, 0.0000001d));
-		scene.camera.width = 200*2;
-		scene.camera.height = 120*2;
+		scene.camera.width = 300;
+		scene.camera.height = 180;
 		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
 
-		scene.elements.add(new Cube(new Point(12.5d, 0d, 6d), 6f, 6f, 6f));
-		scene.elements.add(new Cube(new Point(12.5d, 0d, -6d), 6f, 6f, 6f));
+		Cube c = new Cube(new Point(12.5d, 0d, 6d), 6f, 6f, 6f);
+		c.mat.color = new Color(225,225,255);
+		scene.elements.add(c);
+		c = new Cube(new Point(12.5d, 0d, -6d), 6f, 6f, 6f);
+		c.mat.color = new Color(225,255,225);
+		scene.elements.add(c);
 		scene.elements.add(new Cube(new Point(12.5d, 6d, 0d), 6f, 6f, 6f));
 		scene.elements.add(new Cube(new Point(12.5d, -6d, 0d), 6f, 6f, 6f));
 
@@ -47,20 +51,22 @@ public class Launchable {
 		s.mat.reflection = Material.REFLECTION_REFLECTIVE;
 		scene.elements.add(s);
 
-		scene.elements.add(new Cube(new Point(13.1d, 2.05d, -1.8d), 0.7f, 0.7f, 0.7f));
-
-		Cube c = new Cube(new Point(-201d, 0d, 0d), 200f, 200f, 200f);
-		c.mat.reflection = Material.REFLECTION_GLOWY;
-		c.mat.color = Color.RED;
+	c = new Cube(new Point(13.1d, 2.05d, -1.8d), 0.7f, 0.7f, 0.7f);
+		c.mat.color = new Color(163, 255, 248);
 		scene.elements.add(c);
 
-		scene.lights.add(new LightSource(new Point(11d, -1d, -2d)));
+		c = new Cube(new Point(-151d, 0d, 0d), 150f,150f, 150f);
+		c.mat.reflection = Material.REFLECTION_GLOWY;
+		c.mat.color = new Color(70, 1, 119);
+		scene.elements.add(c);
+
+		scene.lights.add(new LightSource(new Point(11d, -1d, -2d), 100, 1));
 		scene.elements.add(new Sphere(new Point(11d, -1.4d, -2d), 0.15f));
 
-		scene.lights.add(new LightSource(new Point(10d, 1.8d, 2.5d), 30));
+		scene.lights.add(new LightSource(new Point(10d, 1.8d, 2.5d), 30, 1));
 		scene.elements.add(new Sphere(new Point(10d, 2d, 2.5d), 0.15f));
 
-		BufferedImage img = scene.render();
+		BufferedImage img = scene.renderMulti(4);
 //		Filesutility.saveImage(img);
 		gc.p(img);
 	}
