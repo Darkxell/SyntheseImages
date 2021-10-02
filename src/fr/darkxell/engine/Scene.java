@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import fr.darkxell.engine.materials.Material;
+import fr.darkxell.launchable.Launchable;
 import fr.darkxell.utility.MathUtil;
 import fr.darkxell.utility.PairTemplate;
 
@@ -35,7 +36,7 @@ public class Scene {
 
 	public BufferedImage render() {
 		long start = System.currentTimeMillis();
-		System.out.println("Render started in thread " + Thread.currentThread().getName() + "... Processing.");
+		Launchable.gc.p("Render started in thread " + Thread.currentThread().getName() + "...\nProcessing.");
 		BufferedImage img = new BufferedImage(camera.width, camera.height, BufferedImage.TYPE_INT_RGB);
 		Graphics g = img.createGraphics();
 		g.setColor(skyboxerrorcolor);
@@ -46,13 +47,13 @@ public class Scene {
 				g.setColor(computePixelForRaster(i, j));
 				g.fillRect(i, j, 1, 1);
 			}
-			if (i % 37 == 0)
-				System.out.println("Rendered " + i + "/" + img.getWidth() + " columns so far ("
+			if (i % 37 == 31)
+				Launchable.gc.p("Rendered " + i + "/" + img.getWidth() + " columns so far ("
 						+ ((float) i / (float) img.getWidth() * 100) + "%)");
 		}
 		g.dispose();
-		System.out.println("Render complete in " + ((System.currentTimeMillis() - start) / 1000d)
-				+ " seconds for thread " + Thread.currentThread().getName() + ".");
+		Launchable.gc.p("Render complete in " + ((System.currentTimeMillis() - start) / 1000d) + " seconds for thread "
+				+ Thread.currentThread().getName() + ".");
 		return img;
 	}
 
@@ -74,7 +75,7 @@ public class Scene {
 		PairTemplate<Float, SceneElement> hit = hitScan(v_ori, v_dir);
 		float pixeldepth = hit == null ? Float.MAX_VALUE : hit.left;
 		SceneElement intersectElement = hit == null ? null : hit.right;
-		if (intersectElement == null) 
+		if (intersectElement == null)
 			return skyboxerrorcolor;
 
 		Point collision = v_dir.clone().multiply(pixeldepth).add(v_ori);
@@ -109,9 +110,13 @@ public class Scene {
 		double toreturn = 0d;
 		// Iterate N times on values next to the light source
 		for (int liter = 0; liter < ls.fuzziness; ++liter) {
-			Point rdev = new Point(rand.nextDouble() * ls.radius * 2 - ls.radius,
-					rand.nextDouble() * ls.radius * 2 - ls.radius, rand.nextDouble() * ls.radius * 2 - ls.radius);
-			Point efflightpose = ls.pos.clone().add(rdev);
+			Point efflightpose;
+			if (ls.fuzziness > 1) {
+				Point rdev = new Point(rand.nextDouble() * ls.radius * 2 - ls.radius,
+						rand.nextDouble() * ls.radius * 2 - ls.radius, rand.nextDouble() * ls.radius * 2 - ls.radius);
+				efflightpose = ls.pos.clone().add(rdev);
+			} else
+				efflightpose = ls.pos;
 			// Normalized vector containing the direction from the collision vector towards
 			// the light
 			Point lightdirection = efflightpose.clone().substract(point).normalize();

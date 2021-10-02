@@ -10,53 +10,50 @@ import fr.darkxell.engine.Scene;
 import fr.darkxell.engine.materials.Material;
 import fr.darkxell.engine.shapes.Cube;
 import fr.darkxell.engine.shapes.Sphere;
-import fr.darkxell.utility.Filesutility;
+import fr.darkxell.front.GraphConsole;
 
 public class Launchable {
 
+	public static GraphConsole gc;
+	
 	public static void main(String[] args) {
 
-//		System.out.println("Hello world.");
-//
 //		String s = Filesutility.readFile("C:\\Users\\ncandela\\Desktop\\docs\\test.txt");
-//		System.out.println(s);
 //
 //		BufferedImage image = Filesutility.readImage("C:\\Users\\ncandela\\Desktop\\docs\\test.png");
 //		System.out.println(image == null ? "Null image pointer" : image.getHeight() + "x" + image.getWidth());
 
-//		GraphConsole gc = new GraphConsole();
-//		gc.display();
-//		gc.print("Hello world!");
+		gc = new GraphConsole();
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0.0000001d, 0.0000001d));
-		scene.camera.width = 200;
-		scene.camera.height = 120  ;
+		scene.camera.width = 200*2;
+		scene.camera.height = 120*2;
 		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
-		
-		scene.elements.add(new Cube(new Point(12.5d, 0d, 6d), 6f,6f, 6f));
-		scene.elements.add(new Cube(new Point(12.5d, 0d, -6d), 6f,6f, 6f));
-		scene.elements.add(new Cube(new Point(12.5d, 6d, 0d), 6f,6f, 6f));
-		scene.elements.add(new Cube(new Point(12.5d, -6d, 0d), 6f,6f, 6f));
-		
-		scene.elements.add(new Cube(new Point(18.5d, 0d, 0d), 6f,6f, 6f));
-		
+
+		scene.elements.add(new Cube(new Point(12.5d, 0d, 6d), 6f, 6f, 6f));
+		scene.elements.add(new Cube(new Point(12.5d, 0d, -6d), 6f, 6f, 6f));
+		scene.elements.add(new Cube(new Point(12.5d, 6d, 0d), 6f, 6f, 6f));
+		scene.elements.add(new Cube(new Point(12.5d, -6d, 0d), 6f, 6f, 6f));
+
+		scene.elements.add(new Cube(new Point(18.5d, 0d, 0d), 6f, 6f, 6f));
+
 		Sphere s = new Sphere(new Point(12d, 0d, 1.3d), 1.6f);
 		s.mat.color = new Color(255, 189, 114);
 		scene.elements.add(s);
-		
+
 		s = new Sphere(new Point(14.5d, 0.5d, -0.7d), 1.2f);
 		s.mat.color = new Color(163, 255, 248);
 		s.mat.reflection = Material.REFLECTION_REFLECTIVE;
 		scene.elements.add(s);
-		
+
 		scene.elements.add(new Cube(new Point(13.1d, 2.05d, -1.8d), 0.7f, 0.7f, 0.7f));
-		
+
 		Cube c = new Cube(new Point(-201d, 0d, 0d), 200f, 200f, 200f);
 		c.mat.reflection = Material.REFLECTION_GLOWY;
 		c.mat.color = Color.RED;
 		scene.elements.add(c);
-		
+
 		scene.lights.add(new LightSource(new Point(11d, -1d, -2d)));
 		scene.elements.add(new Sphere(new Point(11d, -1.4d, -2d), 0.15f));
 
@@ -64,7 +61,8 @@ public class Launchable {
 		scene.elements.add(new Sphere(new Point(10d, 2d, 2.5d), 0.15f));
 
 		BufferedImage img = scene.render();
-		Filesutility.saveImage(img);
+//		Filesutility.saveImage(img);
+		gc.p(img);
 	}
 
 	/** Tp1, made a function for quick collapse in eclipse. Try me. */
