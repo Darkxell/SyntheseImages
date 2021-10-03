@@ -93,16 +93,16 @@ public class Scene {
 					for (int i = offset; i < offset + workspace.getWidth(); ++i) {
 						for (int j = 0; j < camera.height; ++j) {
 							g.setColor(computePixelForRaster(i, j));
-							g.fillRect(i- offset, j, 1, 1);
+							g.fillRect(i - offset, j, 1, 1);
 						}
 						if (offset == 0 && i % 37 == 31)
-							Launchable.gc.p("Completion approximation for render: " + i + "/" + workspace.getWidth() + " columns ("
-									+ ((float) i / (float) workspace.getWidth() * 100) + "%)");
-						
+							Launchable.gc.p("Completion approximation for render: " + i + "/" + workspace.getWidth()
+									+ " columns (" + ((float) i / (float) workspace.getWidth() * 100) + "%)");
+
 					}
 					g.dispose();
 					finished.iterate();
-						Launchable.gc.p("Thread work complete: " + finished.get() + "/" + t + " finished.");
+					Launchable.gc.p("Thread work complete: " + finished.get() + "/" + t + " finished.");
 				}
 			});
 			thread.start();
@@ -115,7 +115,8 @@ public class Scene {
 			}
 		}
 
-		Launchable.gc.p("Multithreads render completed in " + ((System.currentTimeMillis() - start) / 1000d) + " seconds. Now assembling...");
+		Launchable.gc.p("Multithreads render completed in " + ((System.currentTimeMillis() - start) / 1000d)
+				+ " seconds. Now assembling...");
 		BufferedImage assembly = new BufferedImage(camera.width, camera.height, BufferedImage.TYPE_INT_RGB);
 		Graphics ga = assembly.getGraphics();
 		for (int i = 0; i < response.length; i++) {
@@ -152,8 +153,18 @@ public class Scene {
 		Point normal = intersectElement.normal(collision);
 		switch (intersectElement.mat.reflection) {
 		case Material.REFLECTION_TRANSPARENT:
-			return skyboxerrorcolor;
-		// break;
+			if (recursion >= 0) {
+				Point refraction = v_dir.refraction(normal, intersectElement.mat.refractioncoef);
+				if (refraction == null) {
+					// Case for total refraction
+					Point reflection = v_dir.reflection(normal);
+					collision.add(reflection.clone().multiply(0.001d));
+					return computePixelFor(collision, reflection, recursion - 1);
+				} else {
+					collision.add(refraction.clone().multiply(0.001d));
+					return computePixelFor(collision, refraction, recursion - 1);
+				}
+			}
 		case Material.REFLECTION_REFLECTIVE:
 			if (recursion >= 0) {
 				Point reflection = v_dir.reflection(normal);

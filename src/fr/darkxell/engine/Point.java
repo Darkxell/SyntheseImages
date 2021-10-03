@@ -207,6 +207,30 @@ public class Point {
 		return this.clone().substract(n2i);
 	}
 
+	/**
+	 * This method does not modify this object or the parsed one, and returns a new
+	 * Point with its own memory allocation.
+	 * 
+	 * @return the refraction of this vector according to a normal and a refraction
+	 *         coefficient
+	 */
+	public Point refraction(Point normal, double ior) {
+		// Inverse if we're hitting behind the normal
+		double theta = this.scalarproduct(normal);
+		if (theta > 0){
+		    normal = normal.clone().multiply(-1);
+		    ior = 1.0d / ior;
+		}
+		
+		double n = 1 / ior;
+		double cosI = -this.clone().scalarproduct(normal);
+		double sinT2 = Math.pow(n, 2)  * (1.0d - Math.pow(cosI, 2));
+		if (sinT2 > 1.0)
+			return null; // Returns null in full refraction
+		double cosT = (float) Math.sqrt(1.0f - sinT2);
+		return this.clone().multiply(n).add(normal.clone().multiply(n * cosI - cosT));
+	}
+
 	public Point oneOn() {
 		for (int i = 0; i < positions.length; i++)
 			if (positions[i] != 0)

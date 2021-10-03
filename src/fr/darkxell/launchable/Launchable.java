@@ -11,6 +11,7 @@ import fr.darkxell.engine.materials.Material;
 import fr.darkxell.engine.shapes.Cube;
 import fr.darkxell.engine.shapes.Sphere;
 import fr.darkxell.front.GraphConsole;
+import fr.darkxell.utility.Filesutility;
 
 public class Launchable {
 
@@ -27,47 +28,64 @@ public class Launchable {
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0.0000001d, 0.0000001d));
-		scene.camera.width = 300;
-		scene.camera.height = 180;
-		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
+		scene.camera.width = 300*2;
+		scene.camera.height = 180*2;
+		scene.camera.antialiasing = Camera.ANTIALIASING_32X;
 
+		// Bounding cubes
 		Cube c = new Cube(new Point(12.5d, 0d, 6d), 6f, 6f, 6f);
-		c.mat.color = new Color(225,225,255);
+		c.mat.color = new Color(210, 210, 255);
 		scene.elements.add(c);
 		c = new Cube(new Point(12.5d, 0d, -6d), 6f, 6f, 6f);
-		c.mat.color = new Color(225,255,225);
+		c.mat.color = new Color(210, 255, 210);
 		scene.elements.add(c);
 		scene.elements.add(new Cube(new Point(12.5d, 6d, 0d), 6f, 6f, 6f));
 		scene.elements.add(new Cube(new Point(12.5d, -6d, 0d), 6f, 6f, 6f));
+		c = new Cube(new Point(18.5d, 0d, 0d), 6f, 6f, 6f);
+		c.mat.color = new Color(255, 210, 210);
+		scene.elements.add(c);
 
-		scene.elements.add(new Cube(new Point(18.5d, 0d, 0d), 6f, 6f, 6f));
-
-		Sphere s = new Sphere(new Point(12d, 0d, 1.3d), 1.6f);
-		s.mat.color = new Color(255, 189, 114);
+		Sphere s = new Sphere(new Point(9.1d, 0.5d, 1.3d), 1.1f);
+		s.mat.color = Color.WHITE;
+		s.mat.reflection = Material.REFLECTION_TRANSPARENT;
 		scene.elements.add(s);
 
-		s = new Sphere(new Point(14.5d, 0.5d, -0.7d), 1.2f);
-		s.mat.color = new Color(163, 255, 248);
+		s = new Sphere(new Point(13.5d, 0.5d, -0.9d), 1f);
+		s.mat.color = Color.WHITE;
 		s.mat.reflection = Material.REFLECTION_REFLECTIVE;
 		scene.elements.add(s);
 
-	c = new Cube(new Point(13.1d, 2.05d, -1.8d), 0.7f, 0.7f, 0.7f);
+		s = new Sphere(new Point(12.5d, -1.05d, 0.9d), 0.8f);
+		s.mat.color = new Color(255, 189, 114);
+		scene.elements.add(s);
+
+		c = new Cube(new Point(10.5d, 2d, -1.9d), 0.7f, 0.7f, 0.7f);
+		c.mat.color = new Color(163, 255, 248);
+		scene.elements.add(c);
+		c = new Cube(new Point(10.5d, 1d, -1.9d), 0.7f, 0.7f, 0.7f);
+		c.mat.color = new Color(163, 255, 248);
+		scene.elements.add(c);
+		c = new Cube(new Point(10.5d, 0d, -1.9d), 0.7f, 0.7f, 0.7f);
 		c.mat.color = new Color(163, 255, 248);
 		scene.elements.add(c);
 
-		c = new Cube(new Point(-151d, 0d, 0d), 150f,150f, 150f);
+		// Background cube
+		c = new Cube(new Point(-151d, 0d, 0d), 150f, 150f, 150f);
 		c.mat.reflection = Material.REFLECTION_GLOWY;
 		c.mat.color = new Color(70, 1, 119);
 		scene.elements.add(c);
 
-		scene.lights.add(new LightSource(new Point(11d, -1d, -2d), 100, 1));
-		scene.elements.add(new Sphere(new Point(11d, -1.4d, -2d), 0.15f));
+		scene.lights.add(new LightSource(new Point(9d, -1d, -2d), 60, 20));
+		scene.elements.add(new Sphere(new Point(9d, -1.4d, -2d), 0.15f));
+		
+		scene.lights.add(new LightSource(new Point(12d, -2.1d, -1.8d), 60, 20));
+		scene.elements.add(new Sphere(new Point(12d, -2.3d, -1.8d), 0.15f));
 
-		scene.lights.add(new LightSource(new Point(10d, 1.8d, 2.5d), 30, 1));
+		scene.lights.add(new LightSource(new Point(10d, 1.8d, 2.5d), 30, 10));
 		scene.elements.add(new Sphere(new Point(10d, 2d, 2.5d), 0.15f));
 
 		BufferedImage img = scene.renderMulti(4);
-//		Filesutility.saveImage(img);
+		Filesutility.saveImage(img);
 		gc.p(img);
 	}
 
