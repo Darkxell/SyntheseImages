@@ -1,6 +1,6 @@
 package fr.darkxell.engine;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Camera {
 
@@ -32,16 +32,14 @@ public class Camera {
 		this.rasterOrigin = rasterOrigin;
 	}
 
-	private final Random rand = new Random(System.nanoTime() + Thread.currentThread().getId());
-
 	/**
 	 * Returns the 3d Point where the "pixel" for the given position on the screen
 	 * is. This is a position, not a vector from the camera source. If antialiasing
 	 * is on, this returns a value that may be off by up to 0.5 pixels.
 	 */
 	public Point rasterPixel(int x, int y) {
-		double aliasingX = antialiasing > ANTIALIASING_OFF ? rand.nextDouble() - 0.5d : 0d,
-				aliasingY = antialiasing > ANTIALIASING_OFF ? rand.nextDouble() - 0.5d : 0d;
+		double aliasingX = antialiasing > ANTIALIASING_OFF ? ThreadLocalRandom.current().nextDouble() - 0.5d : 0d,
+				aliasingY = antialiasing > ANTIALIASING_OFF ? ThreadLocalRandom.current().nextDouble() - 0.5d : 0d;
 		double theta = fov * 2 / width;
 		double imod = x - width / 2 + aliasingX, jmod = y - height / 2 + aliasingY;
 		double ti0 = imod * theta, tj0 = jmod * theta;

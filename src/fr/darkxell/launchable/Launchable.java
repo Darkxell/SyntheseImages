@@ -11,7 +11,6 @@ import fr.darkxell.engine.materials.Material;
 import fr.darkxell.engine.shapes.Cube;
 import fr.darkxell.engine.shapes.Sphere;
 import fr.darkxell.front.GraphConsole;
-import fr.darkxell.utility.Filesutility;
 
 public class Launchable {
 
@@ -28,9 +27,9 @@ public class Launchable {
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0.0000001d, 0.0000001d));
-		scene.camera.width = 300*2;
-		scene.camera.height = 180*2;
-		scene.camera.antialiasing = Camera.ANTIALIASING_32X;
+		scene.camera.width = 300;
+		scene.camera.height = 180;
+		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
 
 		// Bounding cubes
 		Cube c = new Cube(new Point(12.5d, 0d, 6d), 6f, 6f, 6f);
@@ -75,17 +74,17 @@ public class Launchable {
 		c.mat.color = new Color(70, 1, 119);
 		scene.elements.add(c);
 
-		scene.lights.add(new LightSource(new Point(9d, -1d, -2d), 60, 20));
+		scene.lights.add(new LightSource(new Point(9d, -1d, -2d), 60, 1));
 		scene.elements.add(new Sphere(new Point(9d, -1.4d, -2d), 0.15f));
-		
-		scene.lights.add(new LightSource(new Point(12d, -2.1d, -1.8d), 60, 20));
+
+		scene.lights.add(new LightSource(new Point(12d, -2.1d, -1.8d), 60, 1));
 		scene.elements.add(new Sphere(new Point(12d, -2.3d, -1.8d), 0.15f));
 
-		scene.lights.add(new LightSource(new Point(10d, 1.8d, 2.5d), 30, 10));
+		scene.lights.add(new LightSource(new Point(10d, 1.8d, 2.5d), 30, 1));
 		scene.elements.add(new Sphere(new Point(10d, 2d, 2.5d), 0.15f));
 
-		BufferedImage img = scene.renderMulti(4);
-		Filesutility.saveImage(img);
+		BufferedImage img = scene.renderMulti(6);
+//		Filesutility.saveImage(img);
 		gc.p(img);
 	}
 

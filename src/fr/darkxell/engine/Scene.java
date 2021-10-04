@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import fr.darkxell.engine.materials.Material;
 import fr.darkxell.launchable.Launchable;
@@ -30,8 +30,6 @@ public class Scene {
 		this.elements = new ArrayList<>(5);
 		this.lights = new ArrayList<>(5);
 	}
-
-	private Random rand = new Random();
 
 	private Color skyboxerrorcolor = Color.PINK;
 
@@ -65,8 +63,7 @@ public class Scene {
 
 	/**
 	 * Renders this scene trough the view of the camera in it. This method uses
-	 * multiple threads. Note that random access will still be synchronized,
-	 * potentially drastically hindering thread swapping.
+	 * multiple threads.
 	 * 
 	 * @param t The numbers of threads to create and use for this job
 	 * @return An image containing a visual representation of said view.
@@ -193,8 +190,8 @@ public class Scene {
 		for (int liter = 0; liter < ls.fuzziness; ++liter) {
 			Point efflightpose;
 			if (ls.fuzziness > 1) {
-				Point rdev = new Point(rand.nextDouble() * ls.radius * 2 - ls.radius,
-						rand.nextDouble() * ls.radius * 2 - ls.radius, rand.nextDouble() * ls.radius * 2 - ls.radius);
+				Point rdev = new Point(ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius,
+						ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius, ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius);
 				efflightpose = ls.pos.clone().add(rdev);
 			} else
 				efflightpose = ls.pos;
