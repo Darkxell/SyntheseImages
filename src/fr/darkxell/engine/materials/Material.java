@@ -1,10 +1,8 @@
 package fr.darkxell.engine.materials;
 
-import java.awt.Color;
-
 public class Material {
 
-	public Material(double reflection, double refraction, Color color) {
+	public Material(double reflection, double refraction, ColorDouble color) {
 		this.reflection = reflection;
 		this.refraction = refraction;
 		this.color = color;
@@ -32,41 +30,41 @@ public class Material {
 	 * The color of this material. Will not have effect if reflection + refraction =
 	 * 1.
 	 */
-	public Color color = Color.WHITE;
+	public ColorDouble color = ColorDouble.WHITE;
 
 	/** https://en.wikipedia.org/wiki/List_of_refractive_indices */
 	public double refractioncoef = 1.5d; // 1.5 = sand glass
 
 	/** A mat white material. Simplest possible material. */
-	public static final Material PRESET_DEFAULTWHITE = new Material(0, 0, Color.WHITE);
+	public static final Material PRESET_DEFAULTWHITE = new Material(0, 0, ColorDouble.WHITE);
 	/** A mat red material. Simplest possible material. */
-	public static final Material PRESET_DEFAULTRED = new Material(0, 0, Color.RED);
+	public static final Material PRESET_DEFAULTRED = new Material(0, 0, ColorDouble.RED);
 	/** A mat green material. Simplest possible material. */
-	public static final Material PRESET_DEFAULTGREEN = new Material(0, 0, Color.GREEN);
+	public static final Material PRESET_DEFAULTGREEN = new Material(0, 0, ColorDouble.GREEN);
 	/** A mat blue material. Simplest possible material. */
-	public static final Material PRESET_DEFAULTBLUE = new Material(0, 0, Color.BLUE);
+	public static final Material PRESET_DEFAULTBLUE = new Material(0, 0, ColorDouble.BLUE);
 	/** An ultrabright purple material, used for debug. */
-	public static final Material PRESET_GLOWYPURPLE = new Material(0, 0, new Color(70, 1, 119));
+	public static final Material PRESET_GLOWYPURPLE = new Material(0, 0, new ColorDouble(70, 1, 119));
 	/** A mat white material. Simplest possible material. */
-	public static final Material PRESET_DEFAULTSLIGHTBLUE = new Material(0, 0, new Color(210, 210, 255));
+	public static final Material PRESET_DEFAULTSLIGHTBLUE = new Material(0, 0, new ColorDouble(210, 210, 255));
 	/** A mat white material. Simplest possible material. */
-	public static final Material PRESET_DEFAULTSLIGHTRED = new Material(0, 0, new Color(255, 210, 210));
+	public static final Material PRESET_DEFAULTSLIGHTRED = new Material(0, 0, new ColorDouble(255, 210, 210));
 	/** A mat white material. Simplest possible material. */
-	public static final Material PRESET_DEFAULTSLIGHTGREEN = new Material(0, 0, new Color(210, 255, 210));
+	public static final Material PRESET_DEFAULTSLIGHTGREEN = new Material(0, 0, new ColorDouble(210, 255, 210));
 	/**
 	 * A fully reflective material. This material will render white if rays die on
 	 * it.
 	 */
-	public static final Material PRESET_MIRRORPERFECT = new Material(1d, 0d, Color.WHITE);
+	public static final Material PRESET_MIRRORPERFECT = new Material(1d, 0d, ColorDouble.WHITE);
 	/**
 	 * A fully reflective material. This material will render white if rays die on
 	 * it.
 	 */
-	public static final Material PRESET_GLASSPERFECT = new Material(0d, 1d, Color.WHITE);
+	public static final Material PRESET_GLASSPERFECT = new Material(0d, 1d, ColorDouble.WHITE);
 	/**
 	 * A slightly reflective light cyan material.
 	 */
-	public static final Material PRESET_REFCYAN = new Material(0.1d, 0d, new Color(163, 255, 248));
+	public static final Material PRESET_REFCYAN = new Material(0.1d, 0d, new ColorDouble(163, 255, 248));
 	
 
 	static {

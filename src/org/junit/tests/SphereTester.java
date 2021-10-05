@@ -40,16 +40,16 @@ public class SphereTester extends TestCase {
 
 	@Test
 	public void testGrad() {
-		assertEquals(255f, MathUtil.grad255(0, 10, 11));
-		assertEquals(0f, MathUtil.grad255(0, 10, -2));
-		assertTrue(MathUtil.grad255(0, 10, 8) > MathUtil.grad255(0, 10, 3));
+		assertEquals(255f, MathUtil.gradN(0, 10, 11, 0, 255));
+		assertEquals(0f, MathUtil.gradN(0, 10, -2, 0, 255));
+		assertTrue(MathUtil.gradN(0, 10, 8, 0, 255) > MathUtil.gradN(0, 10, 3, 0, 255));
 	}
-	
+
 	@Test
 	public void testNormal() {
 		Sphere s = new Sphere(new Point(0, 0, 0), 5f);
 		Point n = s.normal(new Point(5, 0, 0));
-		
+
 		assertEquals(n.x(), 1d);
 		assertEquals(n.y(), 0d);
 		assertEquals(n.z(), 0d);

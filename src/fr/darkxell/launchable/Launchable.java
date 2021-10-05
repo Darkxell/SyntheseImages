@@ -1,18 +1,17 @@
 package fr.darkxell.launchable;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import fr.darkxell.engine.Camera;
 import fr.darkxell.engine.LightSource;
 import fr.darkxell.engine.Point;
 import fr.darkxell.engine.Scene;
+import fr.darkxell.engine.materials.ColorDouble;
 import fr.darkxell.engine.materials.Material;
 import fr.darkxell.engine.shapes.Cube;
 import fr.darkxell.engine.shapes.Sphere;
 import fr.darkxell.engine.shapes.Triangle;
 import fr.darkxell.front.GraphConsole;
-import fr.darkxell.utility.Filesutility;
 
 public class Launchable {
 
@@ -29,8 +28,8 @@ public class Launchable {
 
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0.0000001d, 0.0000001d));
-		scene.camera.width = 7680;
-		scene.camera.height = 4320;
+		scene.camera.width = 200;
+		scene.camera.height = 130;
 		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
 
 		// Bounding cubes
@@ -43,24 +42,24 @@ public class Launchable {
 		c = new Cube(new Point(18.5d, 0d, 0d), 6f, 6f, 6f);
 		c.mat = Material.PRESET_DEFAULTSLIGHTRED;
 		scene.elements.add(c);
-		
+
 		scene.elements.add(new Cube(new Point(12.5d, 6d, 0d), 6f, 6f, 6f));
 		scene.elements.add(new Cube(new Point(12.5d, -6d, 0d), 6f, 6f, 6f));
-		
+
 		Sphere s = new Sphere(new Point(9.1d, 0.5d, 1.3d), 1.1f);
 		s.mat = Material.PRESET_GLASSPERFECT;
 		scene.elements.add(s);
-		
-		Triangle t = new Triangle(new Point(13, -3, -0.3),new Point(15, -1, -0.9), new Point(14.2, -3, -1.2));
-		t.mat = new Material(0, 0, new Color(255, 80, 150));
+
+		Triangle t = new Triangle(new Point(13, -3, -0.3), new Point(15, -1, -0.9), new Point(14.2, -3, -1.2));
+		t.mat = new Material(0, 0, new ColorDouble(255, 80, 150));
 		scene.elements.add(t);
-				
+
 		s = new Sphere(new Point(13.5d, 0.5d, -0.9d), 1f);
 		s.mat = Material.PRESET_MIRRORPERFECT;
 		scene.elements.add(s);
 
 		s = new Sphere(new Point(12.5d, -1.05d, 0.9d), 0.8f);
-		s.mat = new Material(0, 0, new Color(255, 189, 114));
+		s.mat = new Material(0, 0, new ColorDouble(255, 189, 114));
 		scene.elements.add(s);
 
 		c = new Cube(new Point(10.5d, 2d, -1.9d), 0.7f, 0.7f, 0.7f);
@@ -88,7 +87,7 @@ public class Launchable {
 		scene.elements.add(new Sphere(new Point(10d, 2d, 2.5d), 0.15f));
 
 		BufferedImage img = scene.renderMulti(4);
-		Filesutility.saveImage(img);
+//		Filesutility.saveImage(img);
 		gc.p(img);
 	}
 

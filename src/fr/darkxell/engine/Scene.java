@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-import fr.darkxell.engine.materials.Material;
+import fr.darkxell.engine.materials.ColorDouble;
 import fr.darkxell.launchable.Launchable;
 import fr.darkxell.utility.MathUtil;
 import fr.darkxell.utility.PairTemplate;
@@ -31,7 +31,7 @@ public class Scene {
 		this.lights = new ArrayList<>(5);
 	}
 
-	private Color skyboxerrorcolor = Color.PINK;
+	private ColorDouble skyboxerrorcolor = ColorDouble.SKYPINK;
 
 	/**
 	 * Renders this scene trough the view of the camera in it.
@@ -43,12 +43,12 @@ public class Scene {
 		Launchable.gc.p("Render started in thread " + Thread.currentThread().getName() + "...\nProcessing.");
 		BufferedImage img = new BufferedImage(camera.width, camera.height, BufferedImage.TYPE_INT_RGB);
 		Graphics g = img.createGraphics();
-		g.setColor(skyboxerrorcolor);
+		g.setColor(skyboxerrorcolor.toAWTColor());
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		g.setColor(Color.BLACK);
 		for (int i = 0; i < camera.width; ++i) {
 			for (int j = 0; j < camera.height; ++j) {
-				g.setColor(computePixelForRaster(i, j));
+				g.setColor(computePixelForRaster(i, j).toAWTColor());
 				g.fillRect(i, j, 1, 1);
 			}
 			if (i % 37 == 31)
@@ -84,12 +84,12 @@ public class Scene {
 				@Override
 				public void run() {
 					Graphics g = workspace.createGraphics();
-					g.setColor(skyboxerrorcolor);
+					g.setColor(skyboxerrorcolor.toAWTColor());
 					g.fillRect(0, 0, workspace.getWidth(), workspace.getHeight());
 					g.setColor(Color.BLACK);
 					for (int i = offset; i < offset + workspace.getWidth(); ++i) {
 						for (int j = 0; j < camera.height; ++j) {
-							g.setColor(computePixelForRaster(i, j));
+							g.setColor(computePixelForRaster(i, j).toAWTColor());
 							g.fillRect(i - offset, j, 1, 1);
 						}
 						if (offset == 0 && i % 37 == 31)
@@ -125,28 +125,27 @@ public class Scene {
 		return assembly;
 	}
 
-	private Color computePixelForRaster(int i, int j) {
-		double toreturn_r = 0d, toreturn_g = 0d, toreturn_b = 0d;
+	private ColorDouble computePixelForRaster(int i, int j) {
+		ColorDouble toreturn = new ColorDouble(0d, 0d, 0d);
 		double aliasingmultiplier = 1d / camera.antialiasing;
 		for (int aliasingcounter = 0; aliasingcounter < camera.antialiasing; ++aliasingcounter) {
 			Point rasterpixel = camera.rasterPixel(i, j);
 			Point direction = rasterpixel.clone().substract(camera.origin).normalize();
-			Color aapixel = computePixelFor(camera.origin, direction, camera.refractions);
-			toreturn_r += aapixel.getRed() * aliasingmultiplier;
-			toreturn_g += aapixel.getGreen() * aliasingmultiplier;
-			toreturn_b += aapixel.getBlue() * aliasingmultiplier;
+			toreturn.add(computePixelFor(camera.origin, direction, camera.refractions).mul(aliasingmultiplier));
 		}
-		return new Color((int) toreturn_r, (int) toreturn_g, (int) toreturn_b);
+		return toreturn;
 	}
 
-	private Color computePixelFor(Point v_ori, Point v_dir, int recursion) {
+	/** Computes 
+	 * @return a new instance of color, NOT shared by other resources.*/
+	private ColorDouble computePixelFor(Point v_ori, Point v_dir, int recursion) {
 		PairTemplate<Float, SceneElement> hit = hitScan(v_ori, v_dir);
 		float pixeldepth = hit == null ? Float.MAX_VALUE : hit.left;
 		SceneElement intersectElement = hit == null ? null : hit.right;
 		if (intersectElement == null)
-			return skyboxerrorcolor;
+			return skyboxerrorcolor.clone();
 		if (intersectElement.mat.ultrabright)
-			return intersectElement.mat.color;
+			return intersectElement.mat.color.clone();
 		Point collision = v_dir.clone().multiply(pixeldepth).add(v_ori);
 		Point normal = intersectElement.normal(collision);
 
@@ -155,10 +154,9 @@ public class Scene {
 			double totalintensity = 0d;
 			for (int l = 0; l < lights.size(); ++l)
 				totalintensity += computeLightOnElement(lights.get(l), collision, normal);
-			float inter = MathUtil.grad255(0.0001f, 8f, (float) totalintensity) / 255f;
-			Color matcolor = intersectElement.mat.color;
-			return new Color((int) (matcolor.getRed() * inter), (int) (matcolor.getGreen() * inter),
-					(int) (matcolor.getBlue() * inter));
+			double inter = MathUtil.gradN(0.0001d, 8d, totalintensity, 0d, 1d);
+			ColorDouble matcolor = intersectElement.mat.color;
+			return matcolor.clone().mul(inter);
 		}
 
 		if (intersectElement.mat.refraction > 0) {
@@ -181,7 +179,7 @@ public class Scene {
 		}
 
 		System.err.println("Material error, returning skybox error color");
-		return skyboxerrorcolor;
+		return skyboxerrorcolor.clone();
 	}
 
 	/** Returns the intensity of a light on a given point */

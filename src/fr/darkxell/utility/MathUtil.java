@@ -18,19 +18,14 @@ public abstract class MathUtil {
 		y = y * (threehalfs - (x2 * y * y)); // 1st iteration
 		return y;
 	}
-
-	/** Returns a gradiant255 linearly between min and max */
-	public static float grad255(float min, float max, float number) {
+	
+	/** Returns a gradiantN linearly between min and max, with the gradiant between nmin and nmax*/
+	public static double gradN(double min, double max, double number,double nmin, double nmax) {
 		if (number >= max)
-			return 255f;
+			return nmax;
 		if (number <= min)
-			return 0f;
-		return (number - min) / (max - min) * 255;
-	}
-
-	/** Returns the inverse grad255 */
-	public static float rgrad255(float min, float max, float number) {
-		return 255 - grad255(min, max, number);
+			return nmin;
+		return (number - min) / (max - min) * nmax + nmin;
 	}
 
 	/**

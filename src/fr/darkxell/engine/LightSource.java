@@ -1,10 +1,10 @@
 package fr.darkxell.engine;
 
-import java.awt.Color;
+import fr.darkxell.engine.materials.ColorDouble;
 
 public class LightSource {
 
-	public Color color = Color.WHITE;
+	public ColorDouble color = ColorDouble.WHITE;
 	public Point pos;
 	/** Intensity of the light source, in watts */
 	public int intensity = 100;
