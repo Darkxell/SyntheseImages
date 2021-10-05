@@ -126,8 +126,8 @@ public class Scene {
 	}
 
 	private Color computePixelForRaster(int i, int j) {
-		float toreturn_r = 0, toreturn_g = 0, toreturn_b = 0;
-		float aliasingmultiplier = 1f / camera.antialiasing;
+		double toreturn_r = 0d, toreturn_g = 0d, toreturn_b = 0d;
+		double aliasingmultiplier = 1d / camera.antialiasing;
 		for (int aliasingcounter = 0; aliasingcounter < camera.antialiasing; ++aliasingcounter) {
 			Point rasterpixel = camera.rasterPixel(i, j);
 			Point direction = rasterpixel.clone().substract(camera.origin).normalize();
@@ -145,30 +145,13 @@ public class Scene {
 		SceneElement intersectElement = hit == null ? null : hit.right;
 		if (intersectElement == null)
 			return skyboxerrorcolor;
-
+		if (intersectElement.mat.ultrabright)
+			return intersectElement.mat.color;
 		Point collision = v_dir.clone().multiply(pixeldepth).add(v_ori);
 		Point normal = intersectElement.normal(collision);
-		switch (intersectElement.mat.reflection) {
-		case Material.REFLECTION_TRANSPARENT:
-			if (recursion >= 0) {
-				Point refraction = v_dir.refraction(normal, intersectElement.mat.refractioncoef);
-				if (refraction == null) {
-					// Case for total refraction
-					Point reflection = v_dir.reflection(normal);
-					collision.add(reflection.clone().multiply(0.001d));
-					return computePixelFor(collision, reflection, recursion - 1);
-				} else {
-					collision.add(refraction.clone().multiply(0.001d));
-					return computePixelFor(collision, refraction, recursion - 1);
-				}
-			}
-		case Material.REFLECTION_REFLECTIVE:
-			if (recursion >= 0) {
-				Point reflection = v_dir.reflection(normal);
-				collision.add(reflection.clone().multiply(0.001d));
-				return computePixelFor(collision, reflection, recursion - 1);
-			} // If recursion is over, behave as a regular material
-		case Material.REFLECTION_MAT:
+
+		if (recursion <= 0 || (intersectElement.mat.reflection < 1d
+				&& intersectElement.mat.refraction < 1d) /* FIXME: fuzzy here */) {
 			double totalintensity = 0d;
 			for (int l = 0; l < lights.size(); ++l)
 				totalintensity += computeLightOnElement(lights.get(l), collision, normal);
@@ -176,9 +159,27 @@ public class Scene {
 			Color matcolor = intersectElement.mat.color;
 			return new Color((int) (matcolor.getRed() * inter), (int) (matcolor.getGreen() * inter),
 					(int) (matcolor.getBlue() * inter));
-		case Material.REFLECTION_GLOWY:
-			return intersectElement.mat.color;
 		}
+
+		if (intersectElement.mat.refraction > 0) {
+			Point refraction = v_dir.refraction(normal, intersectElement.mat.refractioncoef);
+			if (refraction == null) {
+				// Case for total refraction
+				Point reflection = v_dir.reflection(normal);
+				collision.add(reflection.clone().multiply(0.001d));
+				return computePixelFor(collision, reflection, recursion - 1);
+			} else {
+				collision.add(refraction.clone().multiply(0.001d));
+				return computePixelFor(collision, refraction, recursion - 1);
+			}
+		}
+
+		if (intersectElement.mat.reflection > 0) {
+			Point reflection = v_dir.reflection(normal);
+			collision.add(reflection.clone().multiply(0.001d));
+			return computePixelFor(collision, reflection, recursion - 1);
+		}
+
 		System.err.println("Material error, returning skybox error color");
 		return skyboxerrorcolor;
 	}
@@ -191,7 +192,8 @@ public class Scene {
 			Point efflightpose;
 			if (ls.fuzziness > 1) {
 				Point rdev = new Point(ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius,
-						ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius, ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius);
+						ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius,
+						ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius);
 				efflightpose = ls.pos.clone().add(rdev);
 			} else
 				efflightpose = ls.pos;

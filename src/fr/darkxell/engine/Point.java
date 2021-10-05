@@ -217,14 +217,14 @@ public class Point {
 	public Point refraction(Point normal, double ior) {
 		// Inverse if we're hitting behind the normal
 		double theta = this.scalarproduct(normal);
-		if (theta > 0){
-		    normal = normal.clone().multiply(-1);
-		    ior = 1.0d / ior;
+		if (theta > 0) {
+			normal = normal.clone().multiply(-1);
+			ior = 1.0d / ior;
 		}
-		
+
 		double n = 1 / ior;
 		double cosI = -this.clone().scalarproduct(normal);
-		double sinT2 = Math.pow(n, 2)  * (1.0d - Math.pow(cosI, 2));
+		double sinT2 = Math.pow(n, 2) * (1.0d - Math.pow(cosI, 2));
 		if (sinT2 > 1.0)
 			return null; // Returns null in full refraction
 		double cosT = (float) Math.sqrt(1.0f - sinT2);
@@ -276,5 +276,16 @@ public class Point {
 		for (int i = 0; i < this.getDimention(); i++)
 			toreturn += i == 0 ? (float) this.getN(i) : "," + (float) this.getN(i);
 		return toreturn + "]";
+	}
+
+	public Point cross(Point p) {
+		if (p.getDimention() != 3 && this.getDimention() == 3)
+			return null;
+		double[] cross = new double[3];
+		cross[0] = y() * p.z() - z() * p.y();
+		cross[1] = z() * p.x() - x() * p.z();
+		cross[2] = x() * p.y() - y() * p.x();
+		this.positions = cross;
+		return this;
 	}
 }
