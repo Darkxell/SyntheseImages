@@ -138,7 +138,7 @@ public class Scene {
 	}
 
 	/**
-	 * Computes
+	 * Computes the color seen from a ray in a scene.
 	 * 
 	 * @return a new instance of color, NOT shared by other resources.
 	 */
@@ -149,77 +149,34 @@ public class Scene {
 		if (hit.hitElement.mat.ultrabright)
 			return hit.hitElement.mat.color.clone();
 
-		Point collision = hit.getLocation().clone();
-		Point normal = hit.getNormal();
-
-		if (recursion <= 0 || (hit.hitElement.mat.reflection < 1d
-				&& hit.hitElement.mat.refraction < 1d) /* FIXME: fuzzy here */) {
+		if (recursion <= 0
+				|| (hit.hitElement.mat.reflection < 1d && hit.hitElement.mat.refraction < 1d) /* FIXME: fuzzy here */) {
 			double totalintensity = 0d;
 			for (int l = 0; l < lights.size(); ++l)
-				totalintensity += computeLightOnElement(lights.get(l), collision, normal);
+				totalintensity += hit.computeLightOnThis(lights.get(l), elements);
 			double inter = MathUtil.gradN(0.0001d, 8d, totalintensity, 0d, 1d);
 			ColorDouble matcolor = hit.hitElement.mat.color;
 			return matcolor.clone().mul(inter);
 		}
 
 		if (hit.hitElement.mat.refraction > 0) {
-			Point refraction = v_dir.refraction(normal, hit.hitElement.mat.refractioncoef);
+			Point refraction = v_dir.refraction(hit.getNormal(), hit.hitElement.mat.refractioncoef);
 			if (refraction == null) {
 				// Case for total refraction
-				Point reflection = v_dir.reflection(normal);
-				collision.add(reflection.clone().multiply(0.001d));
-				return computePixelFor(collision, reflection, recursion - 1);
+				Point reflection = v_dir.reflection(hit.getNormal());
+				return computePixelFor(hit.getLocationEpsilonTowards(reflection), reflection, recursion - 1);
 			} else {
-				collision.add(refraction.clone().multiply(0.001d));
-				return computePixelFor(collision, refraction, recursion - 1);
+				return computePixelFor(hit.getLocationEpsilonTowards(refraction), refraction, recursion - 1);
 			}
 		}
 
 		if (hit.hitElement.mat.reflection > 0) {
-			Point reflection = v_dir.reflection(normal);
-			collision.add(reflection.clone().multiply(0.001d));
-			return computePixelFor(collision, reflection, recursion - 1);
+			Point reflection = v_dir.reflection(hit.getNormal());
+			return computePixelFor(hit.getLocationEpsilonTowards(reflection), reflection, recursion - 1);
 		}
 
 		System.err.println("Material error, returning skybox error color");
 		return skyboxerrorcolor.clone();
-	}
-
-	/** Returns the intensity of a light on a given point */
-	private double computeLightOnElement(LightSource ls, Point point, Point normal) {
-		double toreturn = 0d;
-		// Iterate N times on values next to the light source
-		for (int liter = 0; liter < ls.fuzziness; ++liter) {
-			Point efflightpose;
-			if (ls.fuzziness > 1) {
-				Point rdev = new Point(ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius,
-						ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius,
-						ThreadLocalRandom.current().nextDouble() * ls.radius * 2 - ls.radius);
-				efflightpose = ls.pos.clone().add(rdev);
-			} else
-				efflightpose = ls.pos;
-			// Normalized vector containing the direction from the collision vector towards
-			// the light
-			Point lightdirection = efflightpose.clone().substract(point).normalize();
-			// Small padding towards the light to avoid collision with the element that
-			// started the ray
-			Point collisionpadded = point.clone().add(lightdirection.clone().multiply(0.001d));
-			boolean isblocked = false;
-			for (int m = 0; m < elements.size(); m++) {
-				Optional<HitResult> lightersect = elements.get(m).intersect(collisionpadded, lightdirection);
-				if (!lightersect.isEmpty() && Math.pow(lightersect.get().hitDistance, 2) < efflightpose.clone()
-						.substract(collisionpadded).normSquared()) {
-					isblocked = true;
-					break;
-				}
-			}
-			if (!isblocked) {
-				double lighting = (Math.abs(normal.scalarproduct(lightdirection)) * ls.intensity)
-						/ (Math.PI * point.clone().substract(ls.pos).norm());
-				toreturn += lighting / ls.fuzziness;
-			}
-		}
-		return toreturn;
 	}
 
 	/**
