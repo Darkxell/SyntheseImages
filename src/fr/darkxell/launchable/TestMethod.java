@@ -18,7 +18,8 @@ public class TestMethod {
     }
 
     public static void main(String[] args) throws Exception{
-        Class[] parameterTypes = new Class[1];
+        @SuppressWarnings("rawtypes")
+		Class[] parameterTypes = new Class[1];
         parameterTypes[0] = String.class;
         Method functionToPass = TestMethod.class.getMethod("functionToPass", parameterTypes[0]);
         TestMethod main = new TestMethod();

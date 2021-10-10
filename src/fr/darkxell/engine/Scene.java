@@ -5,13 +5,11 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 
 import fr.darkxell.engine.materials.ColorDouble;
 import fr.darkxell.engine.shapes.SceneElement;
 import fr.darkxell.launchable.Launchable;
 import fr.darkxell.utility.MathUtil;
-import fr.darkxell.utility.PairTemplate;
 import fr.darkxell.utility.ThreadSafeCounter;
 
 public class Scene {
