@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import fr.darkxell.engine.materials.ColorDouble;
+import fr.darkxell.engine.shapes.SceneElement;
 import fr.darkxell.launchable.Launchable;
 import fr.darkxell.utility.MathUtil;
 import fr.darkxell.utility.PairTemplate;
@@ -136,31 +137,33 @@ public class Scene {
 		return toreturn;
 	}
 
-	/** Computes 
-	 * @return a new instance of color, NOT shared by other resources.*/
+	/**
+	 * Computes
+	 * 
+	 * @return a new instance of color, NOT shared by other resources.
+	 */
 	private ColorDouble computePixelFor(Point v_ori, Point v_dir, int recursion) {
-		PairTemplate<Float, SceneElement> hit = hitScan(v_ori, v_dir);
-		float pixeldepth = hit == null ? Float.MAX_VALUE : hit.left;
-		SceneElement intersectElement = hit == null ? null : hit.right;
-		if (intersectElement == null)
+		HitResult hit = hitScan(v_ori, v_dir);
+		if (hit == null)
 			return skyboxerrorcolor.clone();
-		if (intersectElement.mat.ultrabright)
-			return intersectElement.mat.color.clone();
-		Point collision = v_dir.clone().multiply(pixeldepth).add(v_ori);
-		Point normal = intersectElement.normal(collision);
+		if (hit.hitElement.mat.ultrabright)
+			return hit.hitElement.mat.color.clone();
 
-		if (recursion <= 0 || (intersectElement.mat.reflection < 1d
-				&& intersectElement.mat.refraction < 1d) /* FIXME: fuzzy here */) {
+		Point collision = hit.getLocation().clone();
+		Point normal = hit.getNormal();
+
+		if (recursion <= 0 || (hit.hitElement.mat.reflection < 1d
+				&& hit.hitElement.mat.refraction < 1d) /* FIXME: fuzzy here */) {
 			double totalintensity = 0d;
 			for (int l = 0; l < lights.size(); ++l)
 				totalintensity += computeLightOnElement(lights.get(l), collision, normal);
 			double inter = MathUtil.gradN(0.0001d, 8d, totalintensity, 0d, 1d);
-			ColorDouble matcolor = intersectElement.mat.color;
+			ColorDouble matcolor = hit.hitElement.mat.color;
 			return matcolor.clone().mul(inter);
 		}
 
-		if (intersectElement.mat.refraction > 0) {
-			Point refraction = v_dir.refraction(normal, intersectElement.mat.refractioncoef);
+		if (hit.hitElement.mat.refraction > 0) {
+			Point refraction = v_dir.refraction(normal, hit.hitElement.mat.refractioncoef);
 			if (refraction == null) {
 				// Case for total refraction
 				Point reflection = v_dir.reflection(normal);
@@ -172,7 +175,7 @@ public class Scene {
 			}
 		}
 
-		if (intersectElement.mat.reflection > 0) {
+		if (hit.hitElement.mat.reflection > 0) {
 			Point reflection = v_dir.reflection(normal);
 			collision.add(reflection.clone().multiply(0.001d));
 			return computePixelFor(collision, reflection, recursion - 1);
@@ -203,8 +206,8 @@ public class Scene {
 			Point collisionpadded = point.clone().add(lightdirection.clone().multiply(0.001d));
 			boolean isblocked = false;
 			for (int m = 0; m < elements.size(); m++) {
-				Optional<Float> lightersect = elements.get(m).intersect(collisionpadded, lightdirection);
-				if (!lightersect.isEmpty() && Math.pow(lightersect.get().floatValue(), 2) < efflightpose.clone()
+				Optional<HitResult> lightersect = elements.get(m).intersect(collisionpadded, lightdirection);
+				if (!lightersect.isEmpty() && Math.pow(lightersect.get().hitDistance, 2) < efflightpose.clone()
 						.substract(collisionpadded).normSquared()) {
 					isblocked = true;
 					break;
@@ -220,22 +223,23 @@ public class Scene {
 	}
 
 	/**
-	 * @return a Pair of distance + Element if this ray hits something in this
-	 *         scene. null if it hits nothing. If the ray hits multiple elements,
-	 *         this method returns the one with the closest hit to the origin point.
+	 * @return a HitResult if this ray hits something in this scene. null if it hits
+	 *         nothing. If the ray hits multiple elements, this method returns the
+	 *         one with the closest hit to the origin point.
+	 * @see HitResult
 	 */
-	private PairTemplate<Float, SceneElement> hitScan(Point rayOri, Point rayDir) {
-		float pixeldepth = Float.MAX_VALUE;
+	private HitResult hitScan(Point rayOri, Point rayDir) {
+		double pixeldepth = Double.MAX_VALUE;
 		SceneElement intersectElement = null;
 		for (int k = 0; k < elements.size(); k++) {
-			Optional<Float> intersect = elements.get(k).intersect(rayOri, rayDir);
-			if (!intersect.isEmpty() && intersect.get().floatValue() > 0 && pixeldepth > intersect.get().floatValue()) {
+			Optional<HitResult> intersect = elements.get(k).intersect(rayOri, rayDir);
+			if (!intersect.isEmpty() && intersect.get().hitDistance > 0 && pixeldepth > intersect.get().hitDistance) {
 				intersectElement = elements.get(k);
-				pixeldepth = intersect.get().floatValue();
+				pixeldepth = intersect.get().hitDistance;
 			}
 		}
 		if (intersectElement != null)
-			return new PairTemplate<>(pixeldepth, intersectElement);
+			return new HitResult(rayOri, rayDir, pixeldepth, intersectElement);
 		else
 			return null;
 	}

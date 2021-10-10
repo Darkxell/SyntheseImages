@@ -2,10 +2,10 @@ package fr.darkxell.engine.shapes;
 
 import java.util.Optional;
 
+import fr.darkxell.engine.HitResult;
 import fr.darkxell.engine.Point;
-import fr.darkxell.engine.SceneElement;
 
-public class Triangle extends SceneElement {
+public class Triangle extends SceneElement implements NormalPrimitive{
 
 	public final Point v1;
 	public final Point v2;
@@ -20,7 +20,7 @@ public class Triangle extends SceneElement {
 	}
 	
 	@Override
-	public Optional<Float> intersect(Point source, Point vector) {
+	public Optional<HitResult> intersect(Point source, Point vector) {
 		Point edge1 = v2.clone().substract(v1);
 		Point edge2 = v3.clone().substract(v1);
 		Point h = vector.clone().cross(edge2);
@@ -42,7 +42,7 @@ public class Triangle extends SceneElement {
 		// On calcule t pour savoir ou le point d'intersection se situe sur la ligne.
 		double t = f * edge2.scalarproduct(q);
 		if (t > EPSILON) // // Intersection avec le rayon
-			return Optional.of((float) t);
+			return Optional.of(new HitResult(source, vector, t, this));
 		else // On a bien une intersection de droite, mais pas de rayon.
 			return Optional.empty();
 	}

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import fr.darkxell.engine.HitResult;
 import fr.darkxell.engine.Point;
 import fr.darkxell.engine.shapes.Sphere;
 import fr.darkxell.utility.MathUtil;
@@ -26,16 +27,16 @@ public class SphereTester extends TestCase {
 		Point dir3 = new Point(1, 1, 1);
 
 		Sphere s1 = new Sphere(new Point(5, 0, 0), 1);
-		Optional<Float> intersect1 = s1.intersect(x, dir);
-		assertEquals(4f, intersect1.isEmpty() ? 0 : intersect1.get().floatValue());
+		Optional<HitResult> intersect1 = s1.intersect(x, dir);
+		assertEquals(4d, intersect1.isEmpty() ? 0 : intersect1.get().hitDistance);
 
 		Sphere s2 = new Sphere(new Point(10, 10, 10), 2);
-		Optional<Float> intersect2 = s2.intersect(x, dir3);
-		assertEquals(8.8453f, intersect2.isEmpty() ? 0 : intersect2.get().floatValue());
+		Optional<HitResult> intersect2 = s2.intersect(x, dir3);
+		assertEquals(8.8453d, intersect2.isEmpty() ? 0 : intersect2.get().hitDistance);
 
 		Sphere s3 = new Sphere(new Point(-5, 0, 0), 5.5f);
-		Optional<Float> intersect3 = s3.intersect(x, dir);
-		assertEquals(0.5f, intersect3.isEmpty() ? 0 : intersect3.get().floatValue());
+		Optional<HitResult> intersect3 = s3.intersect(x, dir);
+		assertEquals(0.5d, intersect3.isEmpty() ? 0d : intersect3.get().hitDistance);
 	}
 
 	@Test

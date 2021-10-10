@@ -3,8 +3,8 @@ package fr.darkxell.engine.shapes;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import fr.darkxell.engine.HitResult;
 import fr.darkxell.engine.Point;
-import fr.darkxell.engine.SceneElement;
 
 /** A mesh made by a list of triangles */
 public class Mesh extends SceneElement {
@@ -20,23 +20,23 @@ public class Mesh extends SceneElement {
 	}
 
 	@Override
-	public Optional<Float> intersect(Point source, Point vector) {
-		Optional<Float> boundingtest = bounds.intersect(source, vector);
-		if (!boundingtest.isEmpty() && boundingtest.get() > 0)
+	public Optional<HitResult> intersect(Point source, Point vector) {
+		Optional<HitResult> boundingtest = bounds.intersect(source, vector);
+		if (!boundingtest.isEmpty() && boundingtest.get().hitDistance > 0)
 			return Optional.empty();
-		float closestTriangledist = Float.MAX_VALUE;
+		double closestTriangledist = Float.MAX_VALUE;
+		Triangle returnpointer = null;
 		for (int i = 0; i < this.data.size(); i++) {
-			Optional<Float> triangletest = this.data.get(i).intersect(source, vector);
-			if (!triangletest.isEmpty() && triangletest.get() > 0 && triangletest.get() < closestTriangledist)
-				closestTriangledist = triangletest.get();
+			Optional<HitResult> triangletest = this.data.get(i).intersect(source, vector);
+			if (!triangletest.isEmpty() && triangletest.get().hitDistance < closestTriangledist
+					&& triangletest.get().hitDistance > 0d) {
+				closestTriangledist = triangletest.get().hitDistance;
+				returnpointer = this.data.get(i);
+			}
 		}
-		return closestTriangledist == Double.MAX_VALUE ? Optional.empty() : Optional.of(closestTriangledist);
-	}
-
-	@Override
-	public Point normal(Point reference) {
-		// TODO : return a proper normal here
-		return null;
+		if (closestTriangledist == Double.MAX_VALUE)
+			return Optional.empty();
+		return Optional.of(new HitResult(source, vector, closestTriangledist, returnpointer));
 	}
 
 	/** Rather expensive method that recomputes the bounding cube of this mesh. */

@@ -2,11 +2,11 @@ package fr.darkxell.engine.shapes;
 
 import java.util.Optional;
 
+import fr.darkxell.engine.HitResult;
 import fr.darkxell.engine.Point;
-import fr.darkxell.engine.SceneElement;
 import fr.darkxell.utility.MathUtil;
 
-public class Cube extends SceneElement {
+public class Cube extends SceneElement implements NormalPrimitive{
 
 	public Point center;
 	public float sizeX;
@@ -21,8 +21,8 @@ public class Cube extends SceneElement {
 	}
 
 	@Override
-	public Optional<Float> intersect(Point ro, Point rd) {
-		Point boxsize = new Point(sizeX/2, sizeY/2, sizeZ/2);
+	public Optional<HitResult> intersect(Point ro, Point rd) {
+		Point boxsize = new Point(sizeX / 2, sizeY / 2, sizeZ / 2);
 		ro = ro.clone().substract(center);
 
 		Point m = rd.clone().oneOn();
@@ -35,9 +35,11 @@ public class Cube extends SceneElement {
 		double tN = MathUtil.ieeemax(MathUtil.ieeemax(t1.x(), t1.y()), t1.z());
 		double tF = MathUtil.ieeemin(MathUtil.ieeemin(t2.x(), t2.y()), t2.z());
 
-		if (tN > tF || tF < 0.0)
+		if (tN > tF || tF < 0d)
 			return Optional.empty();
-		return Optional.of((tN > 0) ? (float) tN : (float) tF);
+
+		HitResult toreturn = new HitResult(ro, rd, (tN > 0) ? tN : tF, this);
+		return Optional.of(toreturn);
 	}
 
 	@Override
