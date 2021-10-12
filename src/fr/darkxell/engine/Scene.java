@@ -182,8 +182,9 @@ public class Scene {
 			Point reflection = v_dir.reflection(hit.getNormal());
 			return computePixelFor(hit.getLocationEpsilonTowards(reflection), reflection, recursion - 1);
 		}
-
+		
 		System.err.println("Material error, returning skybox error color");
+		Thread.dumpStack();
 		return skyboxerrorcolor.clone();
 	}
 

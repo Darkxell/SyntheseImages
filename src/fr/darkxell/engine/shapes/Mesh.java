@@ -15,7 +15,7 @@ import fr.darkxell.engine.materials.Material;
 public class Mesh extends SceneElement {
 
 	private ArrayList<Triangle> data;
-	private Cube bounds;
+	protected Cube bounds;
 
 	public Mesh(ArrayList<Triangle> data) {
 		this.data = data == null ? data : new ArrayList<>(0);

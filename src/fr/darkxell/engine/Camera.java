@@ -16,9 +16,9 @@ public class Camera {
 	/** Camera FOV, in radians */
 	public double fov = 1.22d; // 1.22 = 70degrees
 	/** Width of the camera, ie the width of the render output image. */
-	public int width = 200;
+	public int width = 200*1;
 	/** Height of the camera, ie the height of the render output image. */
-	public int height = 130;
+	public int height = 130*1;
 	/** number of iterations on one pixel */
 	public int antialiasing = ANTIALIASING_OFF;
 	/**
