@@ -49,9 +49,9 @@ public class Triangle extends SceneElement implements NormalPrimitive {
 
 	@Override
 	public Point normal(Point reference) {
-		Point u = v2.clone().substract(v1);
-		Point v = v3.clone().substract(v1);
-		return new Point(u.y() * v.z() - u.z() * v.y(), u.z() * v.x() - u.x() * v.z(), u.x() * v.y() - u.y() * v.x());
+		Point u = v3.clone().substract(v1);
+		Point v = v2.clone().substract(v1);
+		return new Point(u.y() * v.z() - u.z() * v.y(), u.z() * v.x() - u.x() * v.z(), u.x() * v.y() - u.y() * v.x()).normalize();
 	}
 
 	@Override

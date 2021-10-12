@@ -9,8 +9,18 @@ import fr.darkxell.engine.materials.Material;
 public abstract class SceneElement {
 
 	/** Material used for this Element render by a camera */
-	public Material mat = Material.PRESET_DEFAULTWHITE;
-	
+	private Material mat = Material.PRESET_DEFAULTWHITE;
+
+	/** @return a pointer to this material's element */
+	public Material getMat() {
+		return mat;
+	}
+
+	/** Setter for this Element's material */
+	public void setMat(Material m) {
+		mat = m;
+	}
+
 	/**
 	 * @return the intersection distance between this element and the parsed vector.
 	 *         The vector originates from the source point.<br/>

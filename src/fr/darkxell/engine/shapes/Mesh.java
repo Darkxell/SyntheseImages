@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import fr.darkxell.engine.HitResult;
 import fr.darkxell.engine.Point;
+import fr.darkxell.engine.materials.Material;
 
 /** A mesh made by a list of triangles */
 public class Mesh extends SceneElement {
@@ -46,8 +47,8 @@ public class Mesh extends SceneElement {
 					continue;
 				}
 				if (line <= vertices + 2) {
-					verticeslist.add(new Point(Double.parseDouble(cut[0]) + x, Double.parseDouble(cut[1]) + y,
-							Double.parseDouble(cut[2]) + z));
+					verticeslist.add(new Point(Double.parseDouble(cut[0]) * scale + x,
+							Double.parseDouble(cut[1]) * scale + y, Double.parseDouble(cut[2]) * scale + z));
 				} else if (line <= vertices + triangles + 2) {
 					if (cut[0].equals("3")) {
 						int t1 = Integer.parseInt(cut[1]), t2 = Integer.parseInt(cut[2]), t3 = Integer.parseInt(cut[3]);
@@ -55,6 +56,7 @@ public class Mesh extends SceneElement {
 								.add(new Triangle(verticeslist.get(t1), verticeslist.get(t2), verticeslist.get(t3)));
 					} else {
 						System.err.println("Mesh creation Error is off file parsing, malformed triangles list!");
+						Thread.dumpStack();
 					}
 				}
 			}
@@ -121,6 +123,15 @@ public class Mesh extends SceneElement {
 	@Override
 	public String toString() {
 		return "[Mesh with " + data.size() + " triangles bound by:" + bounds + ")]";
+	}
+
+	/** Setter for this Element's material */
+	@Override
+	public void setMat(Material m) {
+		super.setMat(m);
+		if (data != null)
+			for (int i = 0; i < data.size(); i++)
+				data.get(i).setMat(m);
 	}
 
 }

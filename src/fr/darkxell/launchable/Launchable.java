@@ -30,57 +30,60 @@ public class Launchable {
 		
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0));
-		scene.camera.width = 200*4;
-		scene.camera.height = 130*4;
+		scene.camera.width = 200 * 4;
+		scene.camera.height = 130 *4;
 		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
 
 		// Bounding cubes
 		Cube c = new Cube(new Point(12.5d, 0d, 6d), 6f, 6f, 6f);
-		c.mat = Material.PRESET_DEFAULTSLIGHTBLUE;
+		c.setMat(Material.PRESET_DEFAULTSLIGHTBLUE);
 		scene.elements.add(c);
 		c = new Cube(new Point(12.5d, 0d, -6d), 6f, 6f, 6f);
-		c.mat = Material.PRESET_DEFAULTSLIGHTGREEN;
+		c.setMat(Material.PRESET_DEFAULTSLIGHTGREEN);
 		scene.elements.add(c);
 		c = new Cube(new Point(18.5d, 0d, 0d), 6f, 6f, 6f);
-		c.mat = Material.PRESET_DEFAULTSLIGHTRED;
+		c.setMat(Material.PRESET_DEFAULTSLIGHTRED);
 		scene.elements.add(c);
 
 		scene.elements.add(new Cube(new Point(12.5d, 6d, 0d), 6f, 6f, 6f));
 		scene.elements.add(new Cube(new Point(12.5d, -6d, 0d), 6f, 6f, 6f));
 
 		Sphere s = new Sphere(new Point(9.1d, 0.5d, 1.3d), 1.1f);
-		s.mat = Material.PRESET_GLASSPERFECT;
+		s.setMat(Material.PRESET_GLASSPERFECT);
 		scene.elements.add(s);
 
-		Triangle t = new Triangle(new Point(13, -3, -0.3), new Point(15, -1, -0.9), new Point(14.2, -3, -1.2));
-		t.mat = new Material(0, 0, new ColorDouble(255, 80, 150));
+		Triangle t = new Triangle(new Point(13, -3, -0.5), new Point(15.5, -3, -1.2),new Point(15.5, -1, -0.5));
+		t.setMat(Material.PRESET_DEFAULTSLIGHTRED);
+		scene.elements.add(t);
+		t = new Triangle(new Point(13, -3, -0.5), new Point(15.5, -1, -0.5),new Point(15.5, -3, 0.2));
+		t.setMat(Material.PRESET_DEFAULTSLIGHTRED);
 		scene.elements.add(t);
 
 		s = new Sphere(new Point(13.5d, 0.5d, -0.9d), 1f);
-		s.mat = Material.PRESET_MIRRORPERFECT;
+		s.setMat(Material.PRESET_MIRRORPERFECT);
 		scene.elements.add(s);
 
 		s = new Sphere(new Point(12.5d, -1.05d, 0.9d), 0.8f);
-		s.mat = new Material(0, 0, new ColorDouble(255, 189, 114));
+		s.setMat(new Material(0, 0, new ColorDouble(255, 189, 114)));
 		scene.elements.add(s);
 
 		c = new Cube(new Point(10.5d, 2d, -1.9d), 0.7f, 0.7f, 0.7f);
-		c.mat = Material.PRESET_REFCYAN;
+		c.setMat(Material.PRESET_REFCYAN);
 		scene.elements.add(c);
 		c = new Cube(new Point(10.5d, 1d, -1.9d), 0.7f, 0.7f, 0.7f);
-		c.mat = Material.PRESET_REFCYAN;
+		c.setMat(Material.PRESET_REFCYAN);
 		scene.elements.add(c);
 		c = new Cube(new Point(10.5d, 0d, -1.9d), 0.7f, 0.7f, 0.7f);
-		c.mat = Material.PRESET_REFCYAN;
+		c.setMat(Material.PRESET_REFCYAN);
 		scene.elements.add(c);
-		
-		Mesh m = new Mesh("C:\\Users\\ncandela\\Desktop\\docs\\offmodels\\bunny.off",10d, -1.5d, -2.4d,4);
-		m.mat = Material.PRESET_GLOWYPURPLE;
+
+		Mesh m = new Mesh("C:\\Users\\ncandela\\Desktop\\docs\\offmodels\\bunny.off", 11d, -1.4d, -1.9d, 6);
+		m.setMat(Material.PRESET_REFCYAN);
 		scene.elements.add(m);
-		
+
 		// Background cube
 		c = new Cube(new Point(-201d, 0d, 0d), 200f, 200f, 200f);
-		c.mat = Material.PRESET_GLOWYPURPLE;
+		c.setMat(Material.PRESET_GLOWYPURPLE);
 		scene.elements.add(c);
 
 		scene.lights.add(new LightSource(new Point(9d, -1d, -2d), 60, 1));

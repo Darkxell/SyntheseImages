@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import fr.darkxell.engine.materials.ColorDouble;
-import fr.darkxell.engine.shapes.Mesh;
 import fr.darkxell.engine.shapes.SceneElement;
 import fr.darkxell.launchable.Launchable;
 import fr.darkxell.utility.MathUtil;
@@ -107,7 +106,8 @@ public class Scene {
 					}
 					g.dispose();
 					finished.iterate();
-					Launchable.gc.p(Thread.currentThread().getName() + " work complete: " + finished.get() + "/" + t + " finished.");
+					Launchable.gc.p(Thread.currentThread().getName() + " work complete: " + finished.get() + "/" + t
+							+ " finished.");
 				}
 			});
 			thread.setName("Renderer" + tindex);
@@ -154,21 +154,21 @@ public class Scene {
 		HitResult hit = hitScan(v_ori, v_dir);
 		if (hit == null)
 			return skyboxerrorcolor.clone();
-		if (hit.hitElement.mat.ultrabright)
-			return hit.hitElement.mat.color.clone();
+		if (hit.hitElement.getMat().ultrabright)
+			return hit.hitElement.getMat().color.clone();
 
-		if (recursion <= 0
-				|| (hit.hitElement.mat.reflection < 1d && hit.hitElement.mat.refraction < 1d) /* FIXME: fuzzy here */) {
+		if (recursion <= 0 || (hit.hitElement.getMat().reflection < 1d
+				&& hit.hitElement.getMat().refraction < 1d) /* FIXME: fuzzy here */) {
 			double totalintensity = 0d;
 			for (int l = 0; l < lights.size(); ++l)
 				totalintensity += hit.computeLightOnThis(lights.get(l), elements);
 			double inter = MathUtil.gradN(0.0001d, 8d, totalintensity, 0d, 1d);
-			ColorDouble matcolor = hit.hitElement.mat.color;
+			ColorDouble matcolor = hit.hitElement.getMat().color;
 			return matcolor.clone().mul(inter);
 		}
 
-		if (hit.hitElement.mat.refraction > 0) {
-			Point refraction = v_dir.refraction(hit.getNormal(), hit.hitElement.mat.refractioncoef);
+		if (hit.hitElement.getMat().refraction > 0) {
+			Point refraction = v_dir.refraction(hit.getNormal(), hit.hitElement.getMat().refractioncoef);
 			if (refraction == null) {
 				// Case for total refraction
 				Point reflection = v_dir.reflection(hit.getNormal());
@@ -178,7 +178,7 @@ public class Scene {
 			}
 		}
 
-		if (hit.hitElement.mat.reflection > 0) {
+		if (hit.hitElement.getMat().reflection > 0) {
 			Point reflection = v_dir.reflection(hit.getNormal());
 			return computePixelFor(hit.getLocationEpsilonTowards(reflection), reflection, recursion - 1);
 		}
