@@ -30,8 +30,8 @@ public class Launchable {
 		
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0));
-		scene.camera.width = 400;
-		scene.camera.height = 260;
+		scene.camera.width = 200*4;
+		scene.camera.height = 130*4;
 		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
 
 		// Bounding cubes
@@ -74,7 +74,7 @@ public class Launchable {
 		c.mat = Material.PRESET_REFCYAN;
 		scene.elements.add(c);
 		
-		Mesh m = new Mesh("C:\\Users\\ncandela\\Desktop\\docs\\offmodels\\cube.off",10d, -0.5d, -2.4d);
+		Mesh m = new Mesh("C:\\Users\\ncandela\\Desktop\\docs\\offmodels\\bunny.off",10d, -1.5d, -2.4d,4);
 		m.mat = Material.PRESET_GLOWYPURPLE;
 		scene.elements.add(m);
 		

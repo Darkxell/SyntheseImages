@@ -199,9 +199,6 @@ public class Scene {
 
 		for (int k = 0; k < elements.size(); k++) {
 			Optional<HitResult> intersect = elements.get(k).intersect(rayOri, rayDir);
-			if(!intersect.isEmpty()) {
-				System.out.println(elements.get(k) + " is at distance " + intersect.get().hitDistance);
-			}
 			if (!intersect.isEmpty() && intersect.get().hitDistance > 0 && pixeldepth > intersect.get().hitDistance) {
 				intersectElement = intersect.get().hitElement;
 				pixeldepth = intersect.get().hitDistance;

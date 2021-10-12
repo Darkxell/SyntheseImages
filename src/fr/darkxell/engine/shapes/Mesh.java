@@ -22,6 +22,10 @@ public class Mesh extends SceneElement {
 	}
 
 	public Mesh(String fileurl, double x, double y, double z) {
+		this(fileurl, x, y, z, 1d);
+	}
+
+	public Mesh(String fileurl, double x, double y, double z, double scale) {
 		// Open the file
 		FileInputStream fstream;
 		try {
@@ -61,22 +65,19 @@ public class Mesh extends SceneElement {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public Optional<HitResult> intersect(Point source, Point vector) {
 		// If shitty mesh, can't compute an intersection
 		if (bounds == null || data == null || data.size() == 0)
 			return Optional.empty();
 		// Tests if the boundingbox intersects the ray
-//		Optional<HitResult> boundingtest = bounds.intersect(source, vector);
-//		if (boundingtest.isEmpty() || boundingtest.get().hitDistance > 0)
-//			return Optional.empty();
-		
-		System.out.println("Found a mesh collision!");
-		
+		Optional<HitResult> boundingtest = bounds.intersect(source, vector);
+		if (boundingtest.isEmpty() || boundingtest.get().hitDistance < 0)
+			return Optional.empty();
+		// Fetches triangle data to know
 		double closestTriangledist = Double.MAX_VALUE;
 		Triangle returnpointer = null;
-		
 		for (int i = 0; i < this.data.size(); i++) {
 			Optional<HitResult> triangletest = this.data.get(i).intersect(source, vector);
 			if (!triangletest.isEmpty() && triangletest.get().hitDistance < closestTriangledist
@@ -87,7 +88,6 @@ public class Mesh extends SceneElement {
 		}
 		if (closestTriangledist == Double.MAX_VALUE)
 			return Optional.empty();
-		System.out.println("Intersect with mesh actually returned something");
 		return Optional.of(new HitResult(source, vector, closestTriangledist, returnpointer));
 	}
 
