@@ -14,7 +14,7 @@ public abstract class SceneElement {
 	/**
 	 * @return the intersection distance between this element and the parsed vector.
 	 *         The vector originates from the source point.<br/>
-	 *         void Optional if the vector does not intersect the Sphere.
+	 *         void Optional if the vector does not intersect the Element.
 	 */
 	public abstract Optional<HitResult> intersect(Point source, Point vector);
 

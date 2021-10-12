@@ -51,6 +51,7 @@ public class HitResult {
 		}
 		System.err.println("Tried to get the normal of a non normalisable primitive, this makes no sense."
 				+ "\nReturned a unit vector (1,0,0).");
+		Thread.dumpStack();
 		return new Point(1d, 0d, 0d);
 	}
 	

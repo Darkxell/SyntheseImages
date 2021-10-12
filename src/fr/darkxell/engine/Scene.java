@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import fr.darkxell.engine.materials.ColorDouble;
+import fr.darkxell.engine.shapes.Mesh;
 import fr.darkxell.engine.shapes.SceneElement;
 import fr.darkxell.launchable.Launchable;
 import fr.darkxell.utility.MathUtil;
@@ -47,8 +48,12 @@ public class Scene {
 		g.setColor(Color.BLACK);
 		for (int i = 0; i < camera.width; ++i) {
 			for (int j = 0; j < camera.height; ++j) {
-				g.setColor(computePixelForRaster(i, j).toAWTColor());
-				g.fillRect(i, j, 1, 1);
+				try {
+					g.setColor(computePixelForRaster(i, j).toAWTColor());
+					g.fillRect(i, j, 1, 1);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			if (i % 37 == 31)
 				Launchable.gc.p("Rendered " + i + "/" + img.getWidth() + " columns so far ("
@@ -88,8 +93,12 @@ public class Scene {
 					g.setColor(Color.BLACK);
 					for (int i = offset; i < offset + workspace.getWidth(); ++i) {
 						for (int j = 0; j < camera.height; ++j) {
-							g.setColor(computePixelForRaster(i, j).toAWTColor());
-							g.fillRect(i - offset, j, 1, 1);
+							try {
+								g.setColor(computePixelForRaster(i, j).toAWTColor());
+								g.fillRect(i - offset, j, 1, 1);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 						if (offset == 0 && i % 37 == 31)
 							Launchable.gc.p("Completion approximation for render: " + i + "/" + workspace.getWidth()
@@ -98,9 +107,10 @@ public class Scene {
 					}
 					g.dispose();
 					finished.iterate();
-					Launchable.gc.p("Thread work complete: " + finished.get() + "/" + t + " finished.");
+					Launchable.gc.p(Thread.currentThread().getName() + " work complete: " + finished.get() + "/" + t + " finished.");
 				}
 			});
+			thread.setName("Renderer" + tindex);
 			thread.start();
 		}
 
@@ -186,13 +196,18 @@ public class Scene {
 	private HitResult hitScan(Point rayOri, Point rayDir) {
 		double pixeldepth = Double.MAX_VALUE;
 		SceneElement intersectElement = null;
+
 		for (int k = 0; k < elements.size(); k++) {
 			Optional<HitResult> intersect = elements.get(k).intersect(rayOri, rayDir);
+			if(!intersect.isEmpty()) {
+				System.out.println(elements.get(k) + " is at distance " + intersect.get().hitDistance);
+			}
 			if (!intersect.isEmpty() && intersect.get().hitDistance > 0 && pixeldepth > intersect.get().hitDistance) {
-				intersectElement = elements.get(k);
+				intersectElement = intersect.get().hitElement;
 				pixeldepth = intersect.get().hitDistance;
 			}
 		}
+
 		if (intersectElement != null)
 			return new HitResult(rayOri, rayDir, pixeldepth, intersectElement);
 		else

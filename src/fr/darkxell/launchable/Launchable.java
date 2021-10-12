@@ -9,6 +9,7 @@ import fr.darkxell.engine.Scene;
 import fr.darkxell.engine.materials.ColorDouble;
 import fr.darkxell.engine.materials.Material;
 import fr.darkxell.engine.shapes.Cube;
+import fr.darkxell.engine.shapes.Mesh;
 import fr.darkxell.engine.shapes.Sphere;
 import fr.darkxell.engine.shapes.Triangle;
 import fr.darkxell.front.GraphConsole;
@@ -25,11 +26,12 @@ public class Launchable {
 //		System.out.println(image == null ? "Null image pointer" : image.getHeight() + "x" + image.getWidth());
 
 		gc = new GraphConsole();
-
+		gc.p("Building scene...");
+		
 		Scene scene = new Scene();
-		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0.0000001d, 0.0000001d));
-		scene.camera.width = 200;
-		scene.camera.height = 130;
+		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0));
+		scene.camera.width = 400;
+		scene.camera.height = 260;
 		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
 
 		// Bounding cubes
@@ -71,7 +73,11 @@ public class Launchable {
 		c = new Cube(new Point(10.5d, 0d, -1.9d), 0.7f, 0.7f, 0.7f);
 		c.mat = Material.PRESET_REFCYAN;
 		scene.elements.add(c);
-
+		
+		Mesh m = new Mesh("C:\\Users\\ncandela\\Desktop\\docs\\offmodels\\cube.off",10d, -0.5d, -2.4d);
+		m.mat = Material.PRESET_GLOWYPURPLE;
+		scene.elements.add(m);
+		
 		// Background cube
 		c = new Cube(new Point(-201d, 0d, 0d), 200f, 200f, 200f);
 		c.mat = Material.PRESET_GLOWYPURPLE;
@@ -89,35 +95,6 @@ public class Launchable {
 		BufferedImage img = scene.renderMulti(4);
 //		Filesutility.saveImage(img);
 		gc.p(img);
-	}
-
-	/** Tp1, made a function for quick collapse in eclipse. Try me. */
-	@SuppressWarnings("unused")
-	private static void tp1() {
-		Point person0 = new Point(0, 0, 4000);
-		Point vit0 = new Point(50, 0, 0);
-
-		for (int i = 0; i < 60; i++) {
-
-			double C = 0.37f;
-			double m = 10000d; // mass of the person, in grams
-
-			float t = ((float) i) / 10; // time spent since t=0, in seconds
-
-			Point frottements = vit0.isZero() ? new Point(0, 0, 0)
-					: vit0.clone().normalize().multiply(vit0.normSquared()).multiply(C).multiply(1 / m);
-			System.out.println("Frottements : " + frottements);
-
-			Point a = frottements.add(new Point(0, 0, -9.8));
-			System.out.println("Acceleration : " + frottements);
-
-			vit0.add(a.multiply(t));
-			System.out.println("Speed : " + vit0);
-			person0.add(vit0.multiply(t));
-			System.out.println("Position : " + person0);
-
-			System.out.println("----------------------------------------------------------------------------");
-		}
 	}
 
 }

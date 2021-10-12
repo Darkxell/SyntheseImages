@@ -6,7 +6,7 @@ import fr.darkxell.engine.HitResult;
 import fr.darkxell.engine.Point;
 import fr.darkxell.utility.MathUtil;
 
-public class Cube extends SceneElement implements NormalPrimitive{
+public class Cube extends SceneElement implements NormalPrimitive {
 
 	public Point center;
 	public float sizeX;
@@ -22,10 +22,14 @@ public class Cube extends SceneElement implements NormalPrimitive{
 
 	@Override
 	public Optional<HitResult> intersect(Point ro, Point rd) {
+		// Shitty solution for shitty problems
+		Point rd2 = new Point(rd.x() == 0d ? 0.00001 : rd.x(), rd.y() == 0d ? 0.00001 : rd.y(),
+				rd.z() == 0d ? 0.00001 : rd.z());
+
 		Point boxsize = new Point(sizeX / 2, sizeY / 2, sizeZ / 2);
 		ro = ro.clone().substract(center);
 
-		Point m = rd.clone().oneOn();
+		Point m = rd2.clone().oneOn();
 		Point n = m.clone().mul(ro);
 		Point k = m.abs().mul(boxsize);
 
@@ -38,7 +42,7 @@ public class Cube extends SceneElement implements NormalPrimitive{
 		if (tN > tF || tF < 0d)
 			return Optional.empty();
 
-		HitResult toreturn = new HitResult(ro, rd, (tN > 0) ? tN : tF, this);
+		HitResult toreturn = new HitResult(ro, rd2, (tN > 0) ? tN : tF, this);
 		return Optional.of(toreturn);
 	}
 
@@ -73,6 +77,11 @@ public class Cube extends SceneElement implements NormalPrimitive{
 				return new Point(1, 0, 0);
 			return reference.clone().substract(center).normalize();
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "[Cube at " + center + " with size " + sizeX + "/" + sizeY + "/" + sizeZ + "]";
 	}
 
 }

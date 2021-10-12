@@ -1,5 +1,9 @@
 package fr.darkxell.engine.shapes;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -11,21 +15,68 @@ public class Mesh extends SceneElement {
 
 	private ArrayList<Triangle> data;
 	private Cube bounds;
-	private double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE, minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE,
-			minZ = Double.MAX_VALUE, maxZ = Double.MIN_VALUE;
 
 	public Mesh(ArrayList<Triangle> data) {
 		this.data = data == null ? data : new ArrayList<>(0);
 		recomputeBounds();
 	}
 
+	public Mesh(String fileurl, double x, double y, double z) {
+		// Open the file
+		FileInputStream fstream;
+		try {
+			fstream = new FileInputStream(fileurl);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+			String strLine;
+			int triangles = 0, vertices = 0, line = 0;
+			ArrayList<Point> verticeslist = new ArrayList<>(100);
+			ArrayList<Triangle> triangleslist = new ArrayList<>(100);
+			while ((strLine = br.readLine()) != null) {
+				line++;
+				if (line == 1)
+					continue;
+				String[] cut = strLine.split(" ");
+				if (line == 2) {
+					vertices = Integer.parseInt(cut[0]);
+					triangles = Integer.parseInt(cut[1]);
+					continue;
+				}
+				if (line <= vertices + 2) {
+					verticeslist.add(new Point(Double.parseDouble(cut[0]) + x, Double.parseDouble(cut[1]) + y,
+							Double.parseDouble(cut[2]) + z));
+				} else if (line <= vertices + triangles + 2) {
+					if (cut[0].equals("3")) {
+						int t1 = Integer.parseInt(cut[1]), t2 = Integer.parseInt(cut[2]), t3 = Integer.parseInt(cut[3]);
+						triangleslist
+								.add(new Triangle(verticeslist.get(t1), verticeslist.get(t2), verticeslist.get(t3)));
+					} else {
+						System.err.println("Mesh creation Error is off file parsing, malformed triangles list!");
+					}
+				}
+			}
+			fstream.close();
+			this.data = triangleslist;
+			recomputeBounds();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public Optional<HitResult> intersect(Point source, Point vector) {
-		Optional<HitResult> boundingtest = bounds.intersect(source, vector);
-		if (!boundingtest.isEmpty() && boundingtest.get().hitDistance > 0)
+		// If shitty mesh, can't compute an intersection
+		if (bounds == null || data == null || data.size() == 0)
 			return Optional.empty();
-		double closestTriangledist = Float.MAX_VALUE;
+		// Tests if the boundingbox intersects the ray
+//		Optional<HitResult> boundingtest = bounds.intersect(source, vector);
+//		if (boundingtest.isEmpty() || boundingtest.get().hitDistance > 0)
+//			return Optional.empty();
+		
+		System.out.println("Found a mesh collision!");
+		
+		double closestTriangledist = Double.MAX_VALUE;
 		Triangle returnpointer = null;
+		
 		for (int i = 0; i < this.data.size(); i++) {
 			Optional<HitResult> triangletest = this.data.get(i).intersect(source, vector);
 			if (!triangletest.isEmpty() && triangletest.get().hitDistance < closestTriangledist
@@ -36,54 +87,40 @@ public class Mesh extends SceneElement {
 		}
 		if (closestTriangledist == Double.MAX_VALUE)
 			return Optional.empty();
+		System.out.println("Intersect with mesh actually returned something");
 		return Optional.of(new HitResult(source, vector, closestTriangledist, returnpointer));
 	}
 
 	/** Rather expensive method that recomputes the bounding cube of this mesh. */
 	private void recomputeBounds() {
-		for (int i = 0; i < this.data.size(); i++) {
-			if (this.data.get(i).v1.x() < minX)
-				minX = this.data.get(i).v1.x();
-			if (this.data.get(i).v1.x() > maxX)
-				maxX = this.data.get(i).v1.x();
-			if (this.data.get(i).v1.y() < minY)
-				minY = this.data.get(i).v1.y();
-			if (this.data.get(i).v1.y() > maxY)
-				maxY = this.data.get(i).v1.y();
-			if (this.data.get(i).v1.z() < minZ)
-				minZ = this.data.get(i).v1.z();
-			if (this.data.get(i).v1.z() > maxZ)
-				maxZ = this.data.get(i).v1.z();
-
-			if (this.data.get(i).v2.x() < minX)
-				minX = this.data.get(i).v2.x();
-			if (this.data.get(i).v2.x() > maxX)
-				maxX = this.data.get(i).v2.x();
-			if (this.data.get(i).v2.y() < minY)
-				minY = this.data.get(i).v2.y();
-			if (this.data.get(i).v2.y() > maxY)
-				maxY = this.data.get(i).v2.y();
-			if (this.data.get(i).v2.z() < minZ)
-				minZ = this.data.get(i).v2.z();
-			if (this.data.get(i).v2.z() > maxZ)
-				maxZ = this.data.get(i).v2.z();
-
-			if (this.data.get(i).v3.x() < minX)
-				minX = this.data.get(i).v3.x();
-			if (this.data.get(i).v3.x() > maxX)
-				maxX = this.data.get(i).v3.x();
-			if (this.data.get(i).v3.y() < minY)
-				minY = this.data.get(i).v3.y();
-			if (this.data.get(i).v3.y() > maxY)
-				maxY = this.data.get(i).v3.y();
-			if (this.data.get(i).v3.z() < minZ)
-				minZ = this.data.get(i).v3.z();
-			if (this.data.get(i).v3.z() > maxZ)
-				maxZ = this.data.get(i).v3.z();
+		if (data == null || data.size() == 0) {
+			bounds = null;
+			return;
+		}
+		double minX = this.data.get(0).minX(), maxX = this.data.get(0).maxX(), minY = this.data.get(0).minY(),
+				maxY = this.data.get(0).maxY(), minZ = this.data.get(0).minZ(), maxZ = this.data.get(0).maxZ();
+		for (int i = 1; i < this.data.size(); i++) {
+			if (this.data.get(i).minX() < minX)
+				minX = this.data.get(i).minX();
+			if (this.data.get(i).maxX() > maxX)
+				maxX = this.data.get(i).maxX();
+			if (this.data.get(i).minY() < minY)
+				minY = this.data.get(i).minY();
+			if (this.data.get(i).maxY() > maxY)
+				maxY = this.data.get(i).maxY();
+			if (this.data.get(i).minZ() < minZ)
+				minZ = this.data.get(i).minZ();
+			if (this.data.get(i).maxZ() > maxZ)
+				maxZ = this.data.get(i).maxZ();
 		}
 		double sizeX = maxX - minX, sizeY = maxY - minY, sizeZ = maxZ - minZ;
 		this.bounds = new Cube(new Point(minX + sizeX / 2, minY + sizeY / 2, minZ + sizeZ / 2), (float) sizeX,
 				(float) sizeY, (float) sizeZ);
+	}
+
+	@Override
+	public String toString() {
+		return "[Mesh with " + data.size() + " triangles bound by:" + bounds + ")]";
 	}
 
 }

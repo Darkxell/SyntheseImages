@@ -236,7 +236,7 @@ public class Point {
 			if (positions[i] != 0)
 				positions[i] = 1 / positions[i];
 			else
-				positions[i] = 0d; // WHAT THE FUCK JAVA
+				positions[i] = Double.POSITIVE_INFINITY; // WHAT THE FUCK JAVA
 		return this;
 	}
 
