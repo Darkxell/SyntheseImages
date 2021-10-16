@@ -36,6 +36,12 @@ public class Material {
 	 * direction, instead of perfectly.
 	 */
 	public double fuzziness_reflection = 0d;
+	/**
+	 * Scalar to the strength of this material's speculars. 0 means no speculars
+	 * will show. The higher the value, the more prone to specular reflection this
+	 * material will be, appearing shiny.
+	 */
+	public double shinyness = 0d;
 
 	/**
 	 * The color of this material. Will not have effect if reflection + refraction =
@@ -84,6 +90,10 @@ public class Material {
 	static {
 		PRESET_GLOWYPURPLE.ultrabright = true;
 		PRESET_POLISHEDGOLD.fuzziness_reflection = 0.08d;
+		PRESET_MIRRORPERFECT.shinyness = 1d;
+		PRESET_GLASSPERFECT.shinyness = 1d;
+		PRESET_POLISHEDGOLD.shinyness = 1d;
+		PRESET_MERCURY.shinyness = 1d;
 	}
 
 }

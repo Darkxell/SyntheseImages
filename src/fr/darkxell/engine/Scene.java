@@ -162,7 +162,8 @@ public class Scene {
 				refractioncoef = recursion > 0 ? hit.hitElement.getMat().refraction : 0d,
 				matcoef = MathUtil.clamp(1 - reflectioncoef - refractioncoef, 0, 1);
 
-		if (recursion <= 0 || matcoef > 0d) {
+		// Basic coloring
+		if (matcoef > 0d) {
 			double totalintensity = 0d;
 			for (int l = 0; l < lights.size(); ++l)
 				totalintensity += hit.computeLightOnThis(lights.get(l), elements);
@@ -171,6 +172,7 @@ public class Scene {
 			toreturn.add(matcolor.clone().mul(inter).mul(matcoef));
 		}
 
+		// Refraction
 		if (refractioncoef > 0) {
 			Point refraction = v_dir.refraction(hit.getNormal(), hit.hitElement.getMat().refractioncoef);
 			if (refraction == null) {
@@ -178,16 +180,27 @@ public class Scene {
 				reflectioncoef += refractioncoef;
 				refractioncoef = 0d;
 			} else {
-				if(hit.hitElement.getMat().fuzziness_refraction > 0d)
+				if (hit.hitElement.getMat().fuzziness_refraction > 0d)
 					refraction.offsetRandom(hit.hitElement.getMat().fuzziness_refraction);
 				toreturn.add(computePixelFor(hit.getLocationEpsilonTowards(refraction), refraction, recursion - 1)
 						.mul(refractioncoef));
 			}
 		}
 
+		Point reflection = v_dir.reflection(hit.getNormal());
+		// Specular
+		if (hit.hitElement.getMat().shinyness > 0d)
+			for (int l = 0; l < lights.size(); ++l) {
+				Point lightdirection = lights.get(l).pos.clone().substract(hit.getLocation()).normalize();
+				double specularstr = lightdirection.scalarproduct(reflection);
+				specularstr = MathUtil.gradN(0.98d, 1d, specularstr, 0d, 0.5d) * hit.hitElement.getMat().shinyness;
+				toreturn.add(new ColorDouble(specularstr, specularstr, specularstr));
+				// FIXME: integrate specular code to coloring (even when mat=0) to check for collisions and optimise shit.
+			}
+
+		// Reflection
 		if (reflectioncoef > 0) {
-			Point reflection = v_dir.reflection(hit.getNormal());
-			if(hit.hitElement.getMat().fuzziness_reflection > 0d)
+			if (hit.hitElement.getMat().fuzziness_reflection > 0d)
 				reflection.offsetRandom(hit.hitElement.getMat().fuzziness_reflection);
 			ColorDouble reflectedcolor = computePixelFor(hit.getLocationEpsilonTowards(reflection), reflection,
 					recursion - 1);

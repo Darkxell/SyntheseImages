@@ -30,9 +30,9 @@ public class Launchable {
 		
 		Scene scene = new Scene();
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0));
-		scene.camera.width = 200 * 4;
-		scene.camera.height = 130 *4;
-		scene.camera.antialiasing = Camera.ANTIALIASING_32X;
+		scene.camera.width = 200 * 2;
+		scene.camera.height = 130 * 2;
+		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
 
 		// Bounding cubes
 		Cube c = new Cube(new Point(12.5d, 0d, 6d), 6f, 6f, 6f);

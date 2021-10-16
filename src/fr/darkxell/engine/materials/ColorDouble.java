@@ -27,9 +27,12 @@ public class ColorDouble {
 	}
 
 	public ColorDouble add(ColorDouble toadd) {
-		this.red += toadd.red;
-		this.green += toadd.green;
-		this.blue += toadd.blue;
+		double newred = red + toadd.red;
+		this.red = newred >= 1d ? 1d : newred <= 0d ? 0d : newred;
+		double newgreen = green + toadd.green;
+		this.green = newgreen >= 1d ? 1d : newgreen <= 0d ? 0d : newgreen;
+		double newblue = blue + toadd.blue;
+		this.blue = newblue >= 1d ? 1d : newblue <= 0d ? 0d : newblue;
 		return this;
 	}
 
