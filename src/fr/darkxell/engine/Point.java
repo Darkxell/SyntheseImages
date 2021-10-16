@@ -1,6 +1,7 @@
 package fr.darkxell.engine;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 import fr.darkxell.utility.MathUtil;
 
@@ -231,6 +232,7 @@ public class Point {
 		return this.clone().multiply(n).add(normal.clone().multiply(n * cosI - cosT));
 	}
 
+	/** turns every value in this vector into 1/value */
 	public Point oneOn() {
 		for (int i = 0; i < positions.length; i++)
 			if (positions[i] != 0)
@@ -238,6 +240,17 @@ public class Point {
 			else
 				positions[i] = Double.POSITIVE_INFINITY; // WHAT THE FUCK JAVA
 		return this;
+	}
+
+	/**
+	 * Changes the direction of this vector slightly, and then normalises it.
+	 * 
+	 * @param off the maximum amount of offset possible in a direction
+	 */
+	public Point offsetRandom(double off) {
+		for (int i = 0; i < positions.length; i++)
+			positions[i] += ThreadLocalRandom.current().nextDouble() * off; 
+		return this.normalize();
 	}
 
 	public Point abs() {

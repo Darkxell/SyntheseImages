@@ -77,10 +77,13 @@ public class Material {
 	 */
 	public static final Material PRESET_REFCYAN = new Material(0.1d, 0d, new ColorDouble(163, 255, 248));
 	/** A golden reflective material */
-	public static final Material PRESET_POLISHEDGOLD = new Material(0.6d, 0d, ColorDouble.GOLD);
+	public static final Material PRESET_POLISHEDGOLD = new Material(0.7d, 0d, ColorDouble.GOLD);
+	/** A semi reflective transparent material, with a slight silver color. */
+	public static final Material PRESET_MERCURY = new Material(0.035d, 0.75d, ColorDouble.SILVER);
 
 	static {
 		PRESET_GLOWYPURPLE.ultrabright = true;
+		PRESET_POLISHEDGOLD.fuzziness_reflection = 0.08d;
 	}
 
 }

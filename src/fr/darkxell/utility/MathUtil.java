@@ -10,11 +10,11 @@ public abstract class MathUtil {
 		// FIXME: Not sure this works, this fails a unit test later down the line
 		// Fuck quake 3 algorithms anyways, too big brain.
 		float xhalf = 0.5f * number;
-	    int i = Float.floatToIntBits(number);
-	    i = 0x5f3759df - (i >> 1);
-	    number = Float.intBitsToFloat(i);
-	    number *= (1.5f - xhalf * number * number);
-	    return number;
+		int i = Float.floatToIntBits(number);
+		i = 0x5f3759df - (i >> 1);
+		number = Float.intBitsToFloat(i);
+		number *= (1.5f - xhalf * number * number);
+		return number;
 	}
 
 	/**
@@ -44,7 +44,7 @@ public abstract class MathUtil {
 			return nmax;
 		if (number <= min)
 			return nmin;
-		return (number - min) / (max - min) * nmax + nmin;
+		return (number - min) / (max - min) * (nmax - nmin) + nmin;
 	}
 
 	/**

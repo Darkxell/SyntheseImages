@@ -32,7 +32,7 @@ public class Launchable {
 		scene.camera = new Camera(new Point(0, 0, 0), new Point(3, 0, 0));
 		scene.camera.width = 200 * 4;
 		scene.camera.height = 130 *4;
-		scene.camera.antialiasing = Camera.ANTIALIASING_OFF;
+		scene.camera.antialiasing = Camera.ANTIALIASING_32X;
 
 		// Bounding cubes
 		Cube c = new Cube(new Point(12.5d, 0d, 6d), 6f, 6f, 6f);
@@ -49,7 +49,7 @@ public class Launchable {
 		scene.elements.add(new Cube(new Point(12.5d, -6d, 0d), 6f, 6f, 6f));
 
 		Sphere s = new Sphere(new Point(9.1d, 0.5d, 1.3d), 1.1f);
-		s.setMat(Material.PRESET_GLASSPERFECT);
+		s.setMat(Material.PRESET_MERCURY);
 		scene.elements.add(s);
 
 		Triangle t = new Triangle(new Point(13, -3, -0.5), new Point(15.5, -3, -1.2),new Point(15.5, -1, -0.5));
@@ -60,7 +60,7 @@ public class Launchable {
 		scene.elements.add(t);
 
 		s = new Sphere(new Point(13.5d, 0.5d, -0.9d), 1f);
-		s.setMat(Material.PRESET_MIRRORPERFECT);
+		s.setMat(Material.PRESET_POLISHEDGOLD);
 		scene.elements.add(s);
 
 		s = new Sphere(new Point(12.5d, -1.05d, 0.9d), 0.8f);
@@ -95,7 +95,7 @@ public class Launchable {
 		scene.lights.add(new LightSource(new Point(10d, 1.8d, 2.5d), 30, 1));
 		scene.elements.add(new Sphere(new Point(10d, 2d, 2.5d), 0.15f));
 
-		BufferedImage img = scene.renderMulti(4);
+		BufferedImage img = scene.renderMulti(10);
 //		Filesutility.saveImage(img);
 		gc.p(img);
 	}

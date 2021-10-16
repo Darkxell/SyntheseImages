@@ -158,14 +158,15 @@ public class Scene {
 			return hit.hitElement.getMat().color.clone();
 
 		ColorDouble toreturn = new ColorDouble(0, 0, 0);
-		double reflectioncoef = hit.hitElement.getMat().reflection, refractioncoef = hit.hitElement.getMat().refraction,
+		double reflectioncoef = recursion > 0 ? hit.hitElement.getMat().reflection : 0d,
+				refractioncoef = recursion > 0 ? hit.hitElement.getMat().refraction : 0d,
 				matcoef = MathUtil.clamp(1 - reflectioncoef - refractioncoef, 0, 1);
 
 		if (recursion <= 0 || matcoef > 0d) {
 			double totalintensity = 0d;
 			for (int l = 0; l < lights.size(); ++l)
 				totalintensity += hit.computeLightOnThis(lights.get(l), elements);
-			double inter = MathUtil.gradN(0.0001d, 8d, totalintensity, 0d, 1d);
+			double inter = MathUtil.gradN(0.0001d, 8d, totalintensity, 0.05d, 1d);
 			ColorDouble matcolor = hit.hitElement.getMat().color;
 			toreturn.add(matcolor.clone().mul(inter).mul(matcoef));
 		}
@@ -177,12 +178,17 @@ public class Scene {
 				reflectioncoef += refractioncoef;
 				refractioncoef = 0d;
 			} else {
-				toreturn.add(computePixelFor(hit.getLocationEpsilonTowards(refraction), refraction, recursion - 1).mul(refractioncoef));
+				if(hit.hitElement.getMat().fuzziness_refraction > 0d)
+					refraction.offsetRandom(hit.hitElement.getMat().fuzziness_refraction);
+				toreturn.add(computePixelFor(hit.getLocationEpsilonTowards(refraction), refraction, recursion - 1)
+						.mul(refractioncoef));
 			}
 		}
 
 		if (reflectioncoef > 0) {
 			Point reflection = v_dir.reflection(hit.getNormal());
+			if(hit.hitElement.getMat().fuzziness_reflection > 0d)
+				reflection.offsetRandom(hit.hitElement.getMat().fuzziness_reflection);
 			ColorDouble reflectedcolor = computePixelFor(hit.getLocationEpsilonTowards(reflection), reflection,
 					recursion - 1);
 			toreturn.add(reflectedcolor.mul(reflectioncoef));
