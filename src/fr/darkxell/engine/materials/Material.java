@@ -27,6 +27,17 @@ public class Material {
 	public double refraction = 0d;
 
 	/**
+	 * Fuzzyness index, meaning this material will refract rays in a slightly random
+	 * direction, instead of perfectly.
+	 */
+	public double fuzziness_refraction = 0d;
+	/**
+	 * Fuzzyness index, meaning this material will reflect rays in a slightly random
+	 * direction, instead of perfectly.
+	 */
+	public double fuzziness_reflection = 0d;
+
+	/**
 	 * The color of this material. Will not have effect if reflection + refraction =
 	 * 1.
 	 */
@@ -65,7 +76,8 @@ public class Material {
 	 * A slightly reflective light cyan material.
 	 */
 	public static final Material PRESET_REFCYAN = new Material(0.1d, 0d, new ColorDouble(163, 255, 248));
-	
+	/** A golden reflective material */
+	public static final Material PRESET_POLISHEDGOLD = new Material(0.6d, 0d, ColorDouble.GOLD);
 
 	static {
 		PRESET_GLOWYPURPLE.ultrabright = true;

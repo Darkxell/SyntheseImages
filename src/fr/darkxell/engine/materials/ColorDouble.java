@@ -59,6 +59,7 @@ public class ColorDouble {
 	public static final ColorDouble RED = new ColorDouble(1d, 0d, 0d);
 	public static final ColorDouble GREEN = new ColorDouble(0d, 1d, 0d);
 	public static final ColorDouble BLUE = new ColorDouble(0d, 0d, 1d);
+	public static final ColorDouble GOLD = new ColorDouble(1d, 0.85d, 0d);
 	public static final ColorDouble BLACK = new ColorDouble(0d, 0d, 0d);
 	public static final ColorDouble SKYPINK = new ColorDouble(255, 155, 221);
 

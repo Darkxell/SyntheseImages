@@ -9,18 +9,37 @@ public abstract class MathUtil {
 	public static float Q_rsqrt(float number) {
 		// FIXME: Not sure this works, this fails a unit test later down the line
 		// Fuck quake 3 algorithms anyways, too big brain.
-		long i = 0;
-		float x2, y;
-		final float threehalfs = 1.5F;
-		x2 = number * 0.5F;
-		y = number;
-		i = 0x5f3759df - (i >> 1);
-		y = y * (threehalfs - (x2 * y * y)); // 1st iteration
-		return y;
+		float xhalf = 0.5f * number;
+	    int i = Float.floatToIntBits(number);
+	    i = 0x5f3759df - (i >> 1);
+	    number = Float.intBitsToFloat(i);
+	    number *= (1.5f - xhalf * number * number);
+	    return number;
 	}
-	
-	/** Returns a gradiantN linearly between min and max, with the gradiant between nmin and nmax*/
-	public static double gradN(double min, double max, double number,double nmin, double nmax) {
+
+	/**
+	 * Returns a clamped value between min and max. If min or max are Nan, Double
+	 * bounds will be used in their stead. If the value is Nan, Nan will be
+	 * returned.
+	 */
+	public static double clamp(double value, double min, double max) {
+		if (Double.isNaN(min))
+			min = -Double.MAX_VALUE;
+		if (Double.isNaN(max))
+			max = Double.MAX_VALUE;
+		if (value < min)
+			return min;
+		else if (value > max)
+			return max;
+		else
+			return value;
+	}
+
+	/**
+	 * Returns a gradiantN linearly between min and max, with the gradiant between
+	 * nmin and nmax
+	 */
+	public static double gradN(double min, double max, double number, double nmin, double nmax) {
 		if (number >= max)
 			return nmax;
 		if (number <= min)

@@ -157,35 +157,38 @@ public class Scene {
 		if (hit.hitElement.getMat().ultrabright)
 			return hit.hitElement.getMat().color.clone();
 
-		if (recursion <= 0 || (hit.hitElement.getMat().reflection < 1d
-				&& hit.hitElement.getMat().refraction < 1d) /* FIXME: fuzzy here */) {
+		ColorDouble toreturn = new ColorDouble(0, 0, 0);
+		double reflectioncoef = hit.hitElement.getMat().reflection, refractioncoef = hit.hitElement.getMat().refraction,
+				matcoef = MathUtil.clamp(1 - reflectioncoef - refractioncoef, 0, 1);
+
+		if (recursion <= 0 || matcoef > 0d) {
 			double totalintensity = 0d;
 			for (int l = 0; l < lights.size(); ++l)
 				totalintensity += hit.computeLightOnThis(lights.get(l), elements);
 			double inter = MathUtil.gradN(0.0001d, 8d, totalintensity, 0d, 1d);
 			ColorDouble matcolor = hit.hitElement.getMat().color;
-			return matcolor.clone().mul(inter);
+			toreturn.add(matcolor.clone().mul(inter).mul(matcoef));
 		}
 
-		if (hit.hitElement.getMat().refraction > 0) {
+		if (refractioncoef > 0) {
 			Point refraction = v_dir.refraction(hit.getNormal(), hit.hitElement.getMat().refractioncoef);
 			if (refraction == null) {
 				// Case for total refraction
-				Point reflection = v_dir.reflection(hit.getNormal());
-				return computePixelFor(hit.getLocationEpsilonTowards(reflection), reflection, recursion - 1);
+				reflectioncoef += refractioncoef;
+				refractioncoef = 0d;
 			} else {
-				return computePixelFor(hit.getLocationEpsilonTowards(refraction), refraction, recursion - 1);
+				toreturn.add(computePixelFor(hit.getLocationEpsilonTowards(refraction), refraction, recursion - 1).mul(refractioncoef));
 			}
 		}
 
-		if (hit.hitElement.getMat().reflection > 0) {
+		if (reflectioncoef > 0) {
 			Point reflection = v_dir.reflection(hit.getNormal());
-			return computePixelFor(hit.getLocationEpsilonTowards(reflection), reflection, recursion - 1);
+			ColorDouble reflectedcolor = computePixelFor(hit.getLocationEpsilonTowards(reflection), reflection,
+					recursion - 1);
+			toreturn.add(reflectedcolor.mul(reflectioncoef));
 		}
-		
-		System.err.println("Material error, returning skybox error color");
-		Thread.dumpStack();
-		return skyboxerrorcolor.clone();
+
+		return toreturn;
 	}
 
 	/**
