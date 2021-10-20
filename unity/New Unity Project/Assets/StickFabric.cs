@@ -11,37 +11,57 @@ public class StickFabric : MonoBehaviour {
     public List<FabricSegment> segments = new List<FabricSegment>(10);
 
     public FabricPoint hand = null;
-    public Vector3 target = new Vector3(5, 0, 0);
+    public Vector3 target = new Vector3(1.5f, 2, 0);
 
     void Start() {
-        FabricPoint p1 = new FabricPoint(new Vector3(0, 0, 0)),
-            p2 = new FabricPoint(new Vector3(1, 0, 1)),
-            p3 = new FabricPoint(new Vector3(2, 0, 2)),
-            p4 = new FabricPoint(new Vector3(3, 0, 3)),
-            tail1 = new FabricPoint(new Vector3(-1, 0, 0)),
-            tail2 = new FabricPoint(new Vector3(-1.1f, 0, 0)),
-            tail3 = new FabricPoint(new Vector3(-1.2f, 0, 0));
-        hand = p4;
-        p1.locked = true;
+        FabricPoint source = new FabricPoint(new Vector3(0, 1, 0)),
+            shoulderLeft = new FabricPoint(new Vector3(0.5f, 2, 0)),
+            shoulderRight = new FabricPoint(new Vector3(-0.5f, 2, 0)),
+            ArmLeft = new FabricPoint(new Vector3(1, 2, 0)),
+            ArmRight = new FabricPoint(new Vector3(-1, 2, 0)),
+            HandLeft = new FabricPoint(new Vector3(1.5f, 2, 0)),
+            HandRight = new FabricPoint(new Vector3(-1.5f, 2, 0)),
+            LegLeft = new FabricPoint(new Vector3(0.5f, 0.5f, 0)),
+            LegRight = new FabricPoint(new Vector3(-0.5f, 0.5f, 0)),
+            FootLeft = new FabricPoint(new Vector3(0.5f, 0, 0)),
+            FootRight = new FabricPoint(new Vector3(-0.5f, 0, 0));
+        
+        hand = FootLeft;
+        target = hand.position;
+        
+        source.locked = true;
+        ArmLeft.maxangle = 45;
+        ArmRight.maxangle = 45;
+        LegLeft.maxangle = 35;
+        LegRight.maxangle = 35;
 
-        points.Add(p1);
-        points.Add(p2);
-        points.Add(p3);
-        points.Add(p4);
-        points.Add(tail1);
-        points.Add(tail2);
-        points.Add(tail3);
-        segments.Add(new FabricSegment(p1, p2));
-        segments.Add(new FabricSegment(p2, p3));
-        segments.Add(new FabricSegment(p3, p4));
-        segments.Add(new FabricSegment(p1, tail1));
-        segments.Add(new FabricSegment(p1, tail2));
-        segments.Add(new FabricSegment(p1, tail3));
+        points.Add(source);
+        points.Add(shoulderLeft);
+        points.Add(shoulderRight);
+        points.Add(ArmLeft);
+        points.Add(ArmRight);
+        points.Add(HandLeft);
+        points.Add(HandRight);
+        points.Add(LegLeft);
+        points.Add(LegRight);
+        points.Add(FootLeft);
+        points.Add(FootRight);
+        segments.Add(new FabricSegment(source, shoulderLeft));
+        segments.Add(new FabricSegment(source, shoulderRight));
+        segments.Add(new FabricSegment(shoulderRight, shoulderLeft));
+        segments.Add(new FabricSegment(shoulderLeft, ArmLeft));
+        segments.Add(new FabricSegment(shoulderRight, ArmRight));
+        segments.Add(new FabricSegment(ArmLeft, HandLeft));
+        segments.Add(new FabricSegment(ArmRight, HandRight));
+        segments.Add(new FabricSegment(source, LegLeft));
+        segments.Add(new FabricSegment(source, LegRight));
+        segments.Add(new FabricSegment(LegLeft, FootLeft));
+        segments.Add(new FabricSegment(LegRight, FootRight));
     }
 
 
     void Update() {
-        //target.y = 0;
+        //target.z = 0;
         if (hand != null && Vector3.Distance(hand.position, target) > 0.01) {
             iterateFABRIK();
         }
@@ -97,9 +117,11 @@ public class StickFabric : MonoBehaviour {
                 pointFront.position = target;
             }
             // Recalculates the back point of the segment
-
             if (!pointBack.locked) {
-                pointBack.position = pointFront.position + currentsegment.targetLength * (pointBack.position - pointFront.position).normalized;
+                if (!changedPoints.Contains(pointBack)) {
+                    pointBack.position = pointFront.position + currentsegment.targetLength * (pointBack.position - pointFront.position).normalized; 
+                    
+                }
                 changedPoints.Add(pointBack);
             } else {
                 snapback = (pointFront.position + currentsegment.targetLength * (pointBack.position - pointFront.position).normalized) - pointBack.position;
@@ -112,8 +134,6 @@ public class StickFabric : MonoBehaviour {
 
     }
 
-
-
     // Returns the list of segments connected to a point
     private List<FabricSegment> connected(FabricPoint p) {
         List<FabricSegment> toreturn = new List<FabricSegment>(4);
@@ -125,20 +145,54 @@ public class StickFabric : MonoBehaviour {
 
 #if UNITY_EDITOR
     private void OnDrawGizmos() {
-        points.ForEach(p => { 
+        points.ForEach(p => {
             Gizmos.color = (p.locked) ? Color.red : Color.blue;
-            Gizmos.DrawSphere(p.position, 0.1f); 
+            Gizmos.DrawSphere(p.position, 0.05f);
         });
-        Gizmos.color = Color.red;
-        segments.ForEach(s => Gizmos.DrawLine(s.p1.position, s.p2.position));
+        segments.ForEach(s => {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(s.p1.position, s.p2.position);
+            if (s.p1.maxangle > 0) {
+                GizmosDrawCone(s.p1.position, s.p1.position - s.p2.position, s.p1.maxangle, 0.2f);
+            }
+            if (s.p2.maxangle > 0) {
+                GizmosDrawCone(s.p2.position, s.p2.position - s.p1.position, s.p2.maxangle, 0.2f);
+            }
+        });
 
         Handles.color = Color.green;
         Handles.SphereHandleCap(0, target, Quaternion.identity, 0.2f, EventType.Repaint);
     }
+
+    private void GizmosDrawCone(Vector3 position, Vector3 direction, float angle = 45, float length = 0.5f) {
+        GizmosDrawCone(position, direction, Color.blue, angle, length);
+    }
+
+    private void GizmosDrawCone(Vector3 position, Vector3 direction, Color color, float angle = 45, float length = 0.5f) {
+        Handles.color = color;
+        Gizmos.color = color;
+
+        Matrix4x4 originalMatGizmos = Gizmos.matrix;
+        Matrix4x4 originalMatHandles = Handles.matrix;
+
+        Matrix4x4 trs = Matrix4x4.TRS(position, Quaternion.LookRotation(direction), Vector3.one);
+        Gizmos.matrix = trs;
+        Handles.matrix = trs;
+
+        float size = Mathf.Cos(angle * Mathf.Deg2Rad);
+        float radius = (Quaternion.AngleAxis(angle, Vector3.right) * Vector3.forward * length).y;
+
+        Gizmos.DrawRay(Vector3.zero, Quaternion.AngleAxis(angle, Vector3.right) * Vector3.forward * length);
+        Gizmos.DrawRay(Vector3.zero, Quaternion.AngleAxis(-angle, Vector3.right) * Vector3.forward * length);
+        Gizmos.DrawRay(Vector3.zero, Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward * length);
+        Gizmos.DrawRay(Vector3.zero, Quaternion.AngleAxis(-angle, Vector3.up) * Vector3.forward * length);
+
+        Handles.CircleHandleCap(0, Vector3.forward * length * size, Quaternion.identity, radius, EventType.Repaint);
+
+        Gizmos.matrix = originalMatGizmos;
+        Handles.matrix = originalMatHandles;
+    }
 #endif
-
-
-
 }
 
 #if UNITY_EDITOR

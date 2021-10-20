@@ -7,6 +7,8 @@ public class FabricPoint {
     public Vector3 position;
     public bool locked = false;
 
+    public float maxangle = 0;
+
     public FabricPoint(Vector3 position) {
         this.position = position;
     }

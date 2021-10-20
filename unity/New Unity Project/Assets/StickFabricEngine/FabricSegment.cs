@@ -14,6 +14,7 @@ public class FabricSegment {
 
     public float targetLength;
 
+
     public FabricSegment(FabricPoint p1, FabricPoint p2, float length) {
         this.p1 = p1;
         this.p2 = p2;
