@@ -1,6 +1,7 @@
 package fr.darkxell.front;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -59,6 +60,9 @@ public class GraphConsole extends JFrame {
 
 		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g;
+			// Public domain font by Chris Simpkins
+			// https://www.dafont.com/hack.font
+			g.setFont(new Font("Hack Regular", Font.PLAIN, 13));
 			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, getWidth(), getHeight());
 			int heightiter = getHeight() - 20;

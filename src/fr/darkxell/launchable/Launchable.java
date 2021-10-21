@@ -2,6 +2,8 @@ package fr.darkxell.launchable;
 
 import java.awt.image.BufferedImage;
 
+import fr.darkxell.engine.fluids.ChunkedUniverse;
+import fr.darkxell.engine.fluids.UniverseUpdater;
 import fr.darkxell.engine.raytracing.Camera;
 import fr.darkxell.engine.raytracing.LightSource;
 import fr.darkxell.engine.raytracing.Point;
@@ -9,7 +11,6 @@ import fr.darkxell.engine.raytracing.Scene;
 import fr.darkxell.engine.raytracing.materials.ColorDouble;
 import fr.darkxell.engine.raytracing.materials.Material;
 import fr.darkxell.engine.raytracing.shapes.Cube;
-import fr.darkxell.engine.raytracing.shapes.Mesh;
 import fr.darkxell.engine.raytracing.shapes.Sphere;
 import fr.darkxell.engine.raytracing.shapes.Triangle;
 import fr.darkxell.front.GraphConsole;
@@ -21,11 +22,8 @@ public class Launchable {
 	public static void main(String[] args) {
 		gc = new GraphConsole();
 		gc.p("Hello world!");
-//		String s = Filesutility.readFile("C:\\Users\\ncandela\\Desktop\\docs\\test.txt");
-//
-//		BufferedImage image = Filesutility.readImage("C:\\Users\\ncandela\\Desktop\\docs\\test.png");
-//		System.out.println(image == null ? "Null image pointer" : image.getHeight() + "x" + image.getWidth());
 		build3Dscene();
+		simulateFluids();
 	}
 
 	private static void build3Dscene() {
@@ -103,4 +101,11 @@ public class Launchable {
 		gc.p(img);
 	}
 
+	private static void simulateFluids() {
+		gc.p("Building Fluid universe...");
+		ChunkedUniverse universe = new ChunkedUniverse();
+		UniverseUpdater upd = new UniverseUpdater(universe);
+		Thread t = new Thread(upd);
+		t.start();
+	}
 }
