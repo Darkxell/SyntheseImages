@@ -13,27 +13,59 @@ public class ChunkedUniverse {
 	 * flag.
 	 */
 	public char[][] FRAMEBUFFER;
-	public UniverseCell[][] content;
+	public UniverseCell[] content;
 	public final int WIDTH = 100;
 	public final int HEIGHT = 30;
-	
+
 	public ChunkedUniverse() {
 		FRAMEBUFFER = new char[HEIGHT][WIDTH];
-		cleanBuffer();
+		content = new UniverseCell[HEIGHT * WIDTH];
+		for (int i = 0; i < content.length; i++) {
+			int x = i % WIDTH, y = i / WIDTH;
+			content[i] = new UniverseCell(this, x, y);
+			if (x == 0 || x == WIDTH - 1 || y == 0 || y == HEIGHT - 1)
+				content[i].type = UniverseCell.SOLID;
+		}
+		
+		for (int i = 0; i < 10; i++) {
+			addParticle(10.1f, 10.1f + i);
+		}
+		
 	}
 
-	private int particleX = 1;
-	private int particleY = 10;
-
 	public void tick() {
-		particleX++;
-		if (particleX >= WIDTH - 1) {
-			particleX = 1;
-			particleY++;
-			if (particleY >= HEIGHT - 1) 
-				particleY = 1;
-		}
-			
+		for (int i = 0; i < content.length; i++)
+			content[i].tick();
+	}
+
+	/** Translates squared coordinates into a single dimension memory offset. */
+	public int xyToN(int x, int y) {
+		return y * WIDTH + x;
+	}
+
+	public void addParticle(float x, float y) {
+		int cellX = (int) x, cellY = (int) y;
+		if (cellX < 0)
+			cellX = 0;
+		else if (cellX >= WIDTH)
+			cellX = WIDTH - 1;
+		if (cellY < 0)
+			cellY = 0;
+		else if (cellY >= HEIGHT)
+			cellY = HEIGHT - 1;
+		UniverseCell container = content[xyToN(cellX, cellY)];
+		container.content.add(new FluidParticle(container, x % 1, y % 1));
+	}
+
+	/**
+	 * returns a new position of tile offset by the given scalars. -1 if no tile
+	 * exists.
+	 */
+	public int osffsetN(int n, int x, int y) {
+		int currentx = n % WIDTH, currenty = n / WIDTH;
+		if (currentx + x < 0 || currentx + x >= WIDTH || currenty + y < 0 || currenty + y >= HEIGHT)
+			return -1;
+		return n + x + y * WIDTH;
 	}
 
 	/**
@@ -41,19 +73,21 @@ public class ChunkedUniverse {
 	 */
 	public void print() {
 		bufferlockon = true;
-		cleanBuffer();
-		FRAMEBUFFER[particleY][particleX] = 'x';
+		for (int i = 0; i < content.length; i++) {
+			UniverseCell c = content[i];
+			FRAMEBUFFER[c.y][c.x] = c.getChar();
+		}
 		bufferlockon = false;
 	}
 
-	private void cleanBuffer() {
-		for (int i = 0; i < WIDTH; i++)
-			for (int j = 0; j < HEIGHT; j++)
-				FRAMEBUFFER[j][i] = i == 0 || i == WIDTH - 1 ? '║' : j == 0 || j == HEIGHT - 1 ? '═' : ' ';
-		FRAMEBUFFER[0][0] = '╔';
-		FRAMEBUFFER[HEIGHT - 1][0] = '╚';
-		FRAMEBUFFER[0][WIDTH - 1] = '╗';
-		FRAMEBUFFER[HEIGHT - 1][WIDTH - 1] = '╝';
-	}
+//	private void cleanBuffer() {
+//		for (int i = 0; i < WIDTH; i++)
+//			for (int j = 0; j < HEIGHT; j++)
+//				FRAMEBUFFER[j][i] = i == 0 || i == WIDTH - 1 ? '║' : j == 0 || j == HEIGHT - 1 ? '═' : ' ';
+//		FRAMEBUFFER[0][0] = '╔';
+//		FRAMEBUFFER[HEIGHT - 1][0] = '╚';
+//		FRAMEBUFFER[0][WIDTH - 1] = '╗';
+//		FRAMEBUFFER[HEIGHT - 1][WIDTH - 1] = '╝';
+//	}
 
 }
