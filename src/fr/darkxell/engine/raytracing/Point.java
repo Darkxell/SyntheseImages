@@ -1,4 +1,4 @@
-package fr.darkxell.engine;
+package fr.darkxell.engine.raytracing;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;

@@ -1,6 +1,6 @@
-package fr.darkxell.engine.shapes;
+package fr.darkxell.engine.raytracing.shapes;
 
-import fr.darkxell.engine.Point;
+import fr.darkxell.engine.raytracing.Point;
 
 /** Shape that has a deterministic normal given a point. */
 public interface NormalPrimitive {

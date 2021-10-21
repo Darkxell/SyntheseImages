@@ -1,11 +1,11 @@
-package fr.darkxell.engine;
+package fr.darkxell.engine.raytracing;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-import fr.darkxell.engine.shapes.NormalPrimitive;
-import fr.darkxell.engine.shapes.SceneElement;
+import fr.darkxell.engine.raytracing.shapes.NormalPrimitive;
+import fr.darkxell.engine.raytracing.shapes.SceneElement;
 
 public class HitResult {
 

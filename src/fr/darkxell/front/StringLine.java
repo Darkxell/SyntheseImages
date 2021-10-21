@@ -40,7 +40,7 @@ public class StringLine extends ConsoleLine {
 
 	@Override
 	public void print(Graphics2D g2d, int x, int y) {
-		g2d.setColor(Color.BLACK);
+		g2d.setColor(Color.WHITE);
 		for (int i = 0; i < contentsplit.length; i++) {
 			g2d.drawString(contentsplit[i], x, y + 12 * (i + 1));
 		}

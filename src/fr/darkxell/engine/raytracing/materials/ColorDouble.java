@@ -1,4 +1,4 @@
-package fr.darkxell.engine.materials;
+package fr.darkxell.engine.raytracing.materials;
 
 import java.awt.Color;
 

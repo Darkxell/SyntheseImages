@@ -1,4 +1,4 @@
-package fr.darkxell.engine.shapes;
+package fr.darkxell.engine.raytracing.shapes;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -7,9 +7,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import fr.darkxell.engine.HitResult;
-import fr.darkxell.engine.Point;
-import fr.darkxell.engine.materials.Material;
+import fr.darkxell.engine.raytracing.HitResult;
+import fr.darkxell.engine.raytracing.Point;
+import fr.darkxell.engine.raytracing.materials.Material;
 
 /** A mesh made by a list of triangles */
 public class Mesh extends SceneElement {

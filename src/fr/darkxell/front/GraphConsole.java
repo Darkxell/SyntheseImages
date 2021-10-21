@@ -36,7 +36,7 @@ public class GraphConsole extends JFrame {
 			public void run() {
 				try {
 					for (;;) {
-						Thread.sleep(40);
+						Thread.sleep(20);
 						repaint();
 					}
 				} catch (Exception e) {
@@ -59,13 +59,13 @@ public class GraphConsole extends JFrame {
 
 		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g;
-			g.setColor(Color.WHITE);
+			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, getWidth(), getHeight());
 			int heightiter = getHeight() - 20;
 			for (int i = content.size() - 1; i >= 0 && heightiter > 0; i--) {
 				heightiter -= content.get(i).getHeight() + 2;
 				g2d.setColor(new Color(230, 230, 230));
-				g2d.fillRect(15, heightiter, getWidth() - 40, content.get(i).getHeight());
+				g2d.fillRect(15, heightiter, 3, content.get(i).getHeight());
 				content.get(i).print(g2d, 20, heightiter);
 			}
 		}

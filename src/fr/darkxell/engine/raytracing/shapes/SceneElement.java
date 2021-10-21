@@ -1,10 +1,10 @@
-package fr.darkxell.engine.shapes;
+package fr.darkxell.engine.raytracing.shapes;
 
 import java.util.Optional;
 
-import fr.darkxell.engine.HitResult;
-import fr.darkxell.engine.Point;
-import fr.darkxell.engine.materials.Material;
+import fr.darkxell.engine.raytracing.HitResult;
+import fr.darkxell.engine.raytracing.Point;
+import fr.darkxell.engine.raytracing.materials.Material;
 
 public abstract class SceneElement {
 

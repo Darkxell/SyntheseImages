@@ -2,7 +2,7 @@ package org.junit.tests;
 
 import org.junit.Test;
 
-import fr.darkxell.engine.Point;
+import fr.darkxell.engine.raytracing.Point;
 import fr.darkxell.utility.MathUtil;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

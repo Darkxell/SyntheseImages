@@ -1,4 +1,4 @@
-package fr.darkxell.engine.materials;
+package fr.darkxell.engine.raytracing.materials;
 
 public class Material {
 

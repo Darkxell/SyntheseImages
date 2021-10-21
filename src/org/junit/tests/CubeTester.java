@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import fr.darkxell.engine.HitResult;
-import fr.darkxell.engine.Point;
-import fr.darkxell.engine.shapes.Cube;
+import fr.darkxell.engine.raytracing.HitResult;
+import fr.darkxell.engine.raytracing.Point;
+import fr.darkxell.engine.raytracing.shapes.Cube;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;

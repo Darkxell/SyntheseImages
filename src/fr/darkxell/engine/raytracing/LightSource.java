@@ -1,6 +1,6 @@
-package fr.darkxell.engine;
+package fr.darkxell.engine.raytracing;
 
-import fr.darkxell.engine.materials.ColorDouble;
+import fr.darkxell.engine.raytracing.materials.ColorDouble;
 
 public class LightSource {
 
