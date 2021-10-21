@@ -27,6 +27,11 @@ public class ChunkedUniverse {
 				content[i].type = UniverseCell.SOLID;
 		}
 		
+		content[xyToN(1, 1)].type = UniverseCell.SOLID;
+		content[xyToN(WIDTH-2, 1)].type = UniverseCell.SOLID;
+		content[xyToN(1, HEIGHT-2)].type = UniverseCell.SOLID;
+		content[xyToN(WIDTH-2, HEIGHT -2)].type = UniverseCell.SOLID;
+		
 		for (int i = 0; i < 10; i++) {
 			addParticle(10.1f, 10.1f + i);
 		}

@@ -18,7 +18,7 @@ public class FluidParticle {
 		y += 0.2;
 		rebound();
 	}
-
+	
 	/**
 	 * Check if this particle is out of bounds for this container, and transmits it
 	 * to its neighbor if needed. This method recursively changes parents and may lag for extreme velocities.
