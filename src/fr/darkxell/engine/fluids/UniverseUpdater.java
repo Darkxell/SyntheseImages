@@ -12,7 +12,7 @@ public class UniverseUpdater implements Runnable {
 	 * Amount of miliseconds betwen two ticks of this updater. <br/>
 	 * 20 = 50 ticks per second
 	 */
-	private static int MILIDELTA = 100;
+	private static int MILIDELTA = 20;
 
 	/** Reads the updates methods and refreshes the canvas periodically. */
 	public void run() {

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import fr.darkxell.engine.fluids.ChunkedUniverse;
+
 @SuppressWarnings("serial") // Debug class, whatever.
 public class GraphConsole extends JFrame {
 
@@ -48,12 +50,20 @@ public class GraphConsole extends JFrame {
 	}
 
 	/** Prints the wanted bufferedImage onto the console */
-	public void p(Object obj) {
+	public ConsoleLine p(Object obj) {
+		ConsoleLine line = null;
 		if (obj instanceof BufferedImage) {
-			content.add(new ImgLine((BufferedImage) obj));
-		} else {
-			content.add(new StringLine(obj));
+			line = new ImgLine((BufferedImage) obj);
+			content.add(line);
+			return line;
+		} else if (obj instanceof ChunkedUniverse) {
+			line = new FluidUniverseLine((ChunkedUniverse) obj);
+			content.add(line);
+			return line;
 		}
+		line = new StringLine(obj);
+		content.add(line);
+		return line;
 	}
 
 	private class InCanvas extends JComponent {

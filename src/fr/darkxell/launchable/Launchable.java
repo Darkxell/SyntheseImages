@@ -107,5 +107,6 @@ public class Launchable {
 		UniverseUpdater upd = new UniverseUpdater(universe);
 		Thread t = new Thread(upd);
 		t.start();
+		gc.p(universe);
 	}
 }
