@@ -1,5 +1,7 @@
 package fr.darkxell.engine.fluids;
 
+import java.util.Iterator;
+
 public class ChunkedUniverse {
 
 	/**
@@ -17,7 +19,7 @@ public class ChunkedUniverse {
 	public final int WIDTH = 100;
 	public final int HEIGHT = 30;
 
-	public final float GRAVITY = 0.01f;
+	public final float GRAVITY = 0.005f;
 
 	public ChunkedUniverse() {
 		FRAMEBUFFER = new char[HEIGHT][WIDTH];
@@ -33,17 +35,49 @@ public class ChunkedUniverse {
 		content[xyToN(WIDTH - 2, 1)].type = UniverseCell.SOLID;
 		content[xyToN(1, HEIGHT - 2)].type = UniverseCell.SOLID;
 		content[xyToN(WIDTH - 2, HEIGHT - 2)].type = UniverseCell.SOLID;
+		
+		for (int i = 20; i < 60; i++) 
+			content[xyToN(i, 18)].type = UniverseCell.SOLID;
+		content[xyToN(20, 17)].type = UniverseCell.SOLID;
+		content[xyToN(20, 16)].type = UniverseCell.SOLID;
+		content[xyToN(20, 14)].type = UniverseCell.SOLID;
+		content[xyToN(20, 13)].type = UniverseCell.SOLID;
+		content[xyToN(20, 12)].type = UniverseCell.SOLID;
+		content[xyToN(20, 11)].type = UniverseCell.SOLID;
+		content[xyToN(19, 12)].type = UniverseCell.SOLID;
+		content[xyToN(19, 11)].type = UniverseCell.SOLID;
+		content[xyToN(59, 17)].type = UniverseCell.SOLID;
+		content[xyToN(59, 16)].type = UniverseCell.SOLID;
+		
+		for (int i = 50; i < 70; i++) 
+			content[xyToN(i, 25)].type = UniverseCell.SOLID;
+		content[xyToN(50, 24)].type = UniverseCell.SOLID;
+		content[xyToN(50, 23)].type = UniverseCell.SOLID;
+		content[xyToN(69, 24)].type = UniverseCell.SOLID;
+		content[xyToN(69, 23)].type = UniverseCell.SOLID;
 
-		for (int i = 0; i < 98; i++)
-			for (int j = 0; j < 12; j++) {
-				addParticle(1.1f + i, 5.1f + j);
+		for (int i = 30; i < 68; i++)
+			for (int j = 2; j < 6; j++) {
+					addParticle(1.1f + i, 5.1f + j);
+					addParticle(1.6f + i, 5.1f + j);
+					addParticle(1.1f + i, 5.6f + j);
+					addParticle(1.6f + i, 5.6f + j);
 			}
+//		FluidParticle debugpart = addParticle(50.1f, 11.1f);
+//		debugpart.velocity.pp()[0] = 0.4;
+//		debugpart.debugEnabled = true;
 
 	}
 
 	public void tick() {
 		for (int i = 0; i < content.length; i++)
 			content[i].tick();
+		
+		int partcount = 0;
+		for (int i = 0; i < content.length; i++) {
+			partcount += content[i].content.size();
+		}
+		System.out.println("Universe particle count : " + partcount);
 	}
 
 	/** Translates squared coordinates into a single dimension memory offset. */
@@ -51,7 +85,7 @@ public class ChunkedUniverse {
 		return y * WIDTH + x;
 	}
 
-	public void addParticle(float x, float y) {
+	public FluidParticle addParticle(float x, float y) {
 		int cellX = (int) x, cellY = (int) y;
 		if (cellX < 0)
 			cellX = 0;
@@ -62,7 +96,9 @@ public class ChunkedUniverse {
 		else if (cellY >= HEIGHT)
 			cellY = HEIGHT - 1;
 		UniverseCell container = content[xyToN(cellX, cellY)];
-		container.content.add(new FluidParticle(container, x % 1, y % 1));
+		FluidParticle toreturn = new FluidParticle(container, x % 1, y % 1);
+		container.content.add(toreturn);
+		return toreturn;
 	}
 
 	/**

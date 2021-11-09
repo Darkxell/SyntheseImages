@@ -152,6 +152,21 @@ public class Point {
 		multiply(1 / n);
 		return this;
 	}
+	
+	/**
+	 * Changes the values of this point, so that the norm of the vector formed by
+	 * its coordinates is 1. This is a rather expensive calculation.
+	 */
+	public Point normalizeIfNonZero() {
+		double n = this.norm();
+		if( n==0 || Double.isNaN(n)) {
+			for (int i = 0; i < positions.length; i++) 
+				positions[i] = 0d;
+			return this;
+		}
+		multiply(1 / n);
+		return this;
+	}
 
 	/** Returns the norm of this vector */
 	public double norm() {

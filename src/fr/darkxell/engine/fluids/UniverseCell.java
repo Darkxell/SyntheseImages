@@ -31,7 +31,7 @@ public class UniverseCell {
 	public char getChar() {
 		switch (type) {
 		case AIR:
-			return content.size() == 0 ? ' ' : content.size() < 4 ? '░' : content.size() < 8 ? '▒' : '▓';
+			return content.size() == 0 ? ' ' : content.size() < 2 ? '░' : content.size() < 4 ? '▒' : '▓';
 		case SOLID:
 			return getSolidTexture();
 		case SPONGE:
