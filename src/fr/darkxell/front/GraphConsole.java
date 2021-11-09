@@ -26,6 +26,7 @@ public class GraphConsole extends JFrame {
 	public GraphConsole() {
 		setTitle("Graph Console");
 		setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		setConsIcon();
 
 		InCanvas component = new InCanvas();
 		add(component);
@@ -64,6 +65,17 @@ public class GraphConsole extends JFrame {
 		line = new StringLine(obj);
 		content.add(line);
 		return line;
+	}
+
+	private void setConsIcon() {
+		BufferedImage iconimg = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = (Graphics2D) iconimg.createGraphics();
+		g2d.setColor(Color.BLACK);
+		g2d.fillRect(0, 0, 64, 64);
+		g2d.setColor(Color.WHITE);
+		g2d.fillRect(8, 8, 8, 48);
+		g2d.dispose();
+		setIconImage(iconimg);
 	}
 
 	private class InCanvas extends JComponent {

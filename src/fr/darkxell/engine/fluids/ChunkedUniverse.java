@@ -17,6 +17,8 @@ public class ChunkedUniverse {
 	public final int WIDTH = 100;
 	public final int HEIGHT = 30;
 
+	public final float GRAVITY = 0.01f;
+
 	public ChunkedUniverse() {
 		FRAMEBUFFER = new char[HEIGHT][WIDTH];
 		content = new UniverseCell[HEIGHT * WIDTH];
@@ -26,16 +28,17 @@ public class ChunkedUniverse {
 			if (x == 0 || x == WIDTH - 1 || y == 0 || y == HEIGHT - 1)
 				content[i].type = UniverseCell.SOLID;
 		}
-		
+
 		content[xyToN(1, 1)].type = UniverseCell.SOLID;
-		content[xyToN(WIDTH-2, 1)].type = UniverseCell.SOLID;
-		content[xyToN(1, HEIGHT-2)].type = UniverseCell.SOLID;
-		content[xyToN(WIDTH-2, HEIGHT -2)].type = UniverseCell.SOLID;
-		
-		for (int i = 0; i < 10; i++) {
-			addParticle(10.1f, 10.1f + i);
-		}
-		
+		content[xyToN(WIDTH - 2, 1)].type = UniverseCell.SOLID;
+		content[xyToN(1, HEIGHT - 2)].type = UniverseCell.SOLID;
+		content[xyToN(WIDTH - 2, HEIGHT - 2)].type = UniverseCell.SOLID;
+
+		for (int i = 0; i < 98; i++)
+			for (int j = 0; j < 12; j++) {
+				addParticle(1.1f + i, 5.1f + j);
+			}
+
 	}
 
 	public void tick() {

@@ -45,6 +45,8 @@ public class UniverseCell {
 	 * bounds.
 	 */
 	public UniverseCell getNeighbour(int x, int y) {
+		if (x == 0 && y == 0)
+			return this;
 		int k = parent.osffsetN(parent.xyToN(this.x, this.y), x, y);
 		if (k == -1)
 			return null;

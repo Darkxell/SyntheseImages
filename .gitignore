@@ -44,3 +44,4 @@ Assets/StreamingAssets/crashlytics-build.properties
 /bin/*
 *.prefs
 *.class
+/bin/
