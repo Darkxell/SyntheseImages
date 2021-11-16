@@ -49,4 +49,5 @@ Assets/StreamingAssets/crashlytics-build.properties
 # opengl
 /opengl/Debug/*
 opengl/Debug/*
+opengl/Debug
 *.tlog
