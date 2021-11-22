@@ -6,7 +6,7 @@ int main(void)
 {
 	// https://www.glfw.org/
 	GLFWwindow* window;
-	
+
 	/* Initialize the libraries and creates an openGL context.*/
 	{
 		if (!glfwInit())
@@ -26,21 +26,35 @@ int main(void)
 			std::cout << "Glew couldn't initialize." << std::endl;
 			return -1;
 		}
-		
+
 		std::cout << "Context ready, with GLEW and GLFW initialised." << std::endl;
-		std::cout << "Opengl version : " << glGetString(GL_VERSION)  << std::endl;
+		std::cout << "Opengl version : " << glGetString(GL_VERSION) << std::endl;
 	}
-	
+
+	// Generates a buffer of id "bufferid"
+	unsigned int bufferid;
+	glGenBuffers(1, &bufferid);
+	// Bind to the memory buffer
+	glBindBuffer(GL_ARRAY_BUFFER, bufferid);
+
+	// Fills the buffer with triangle positions
+	float positions[6] = {
+		-0.5f, -0.5,
+		0.0f, 0.5f,
+		0.5f, -0.5f
+	};
+	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+
+	// Set vertex attributes
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+	glEnableVertexAttribArray(0);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glBegin(GL_TRIANGLES);
-		glVertex2f(-0.5f, -0.5f);
-		glVertex2f(0.0f, 0.5f);
-		glVertex2f(0.5f, -0.5f);
-		glEnd();
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

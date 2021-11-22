@@ -1,1 +1,2 @@
 D:\repositories\SyntheseImages\opengl\Debug\opengl.exe
+C:\Users\ncandela\Documents\GitHub\SyntheseImages\opengl\Debug\opengl.exe
