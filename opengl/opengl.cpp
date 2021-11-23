@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 
 static unsigned int CompileShader(unsigned int type, const std::string& source) {
-	
+
 	// Shader compile
 	unsigned int id = glCreateShader(type);
 	const char* src = source.c_str();
@@ -37,7 +37,7 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
 	glAttachShader(program, vs); glAttachShader(program, fs);
-	
+
 	glLinkProgram(program);
 	glValidateProgram(program);
 
@@ -46,8 +46,11 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 	return program;
 }
 
-int main(void)
-{
+/*struct Vertex {
+
+};*/
+
+int main(void) {
 	// https://www.glfw.org/
 	GLFWwindow* window;
 
@@ -81,6 +84,9 @@ int main(void)
 	// Bind to the memory buffer
 	glBindBuffer(GL_ARRAY_BUFFER, bufferid);
 
+	// Creates the triangle data array
+	//vector<>
+
 	// Fills the buffer with triangle positions
 	float positions[6] = {
 		-0.5f, -0.5,
@@ -108,7 +114,7 @@ int main(void)
 		"layout(location = 0) out vec4 color;"
 		"\n"
 		"void main(){\n"
-		"	color = vec4(1.0, 0.0, 0.0, 1.0);\n"
+		"	color = vec4(0.0, 1.0, 1.0, 1.0);\n"
 		"}\n";
 	unsigned int shader = CreateShader(vrtshader, frgshader);
 	glUseProgram(shader);
