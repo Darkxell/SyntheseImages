@@ -12,6 +12,36 @@
 
 };*/
 
+/*Processes an OpenGL error message callback*/
+void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
+	std::string severitystr;
+	switch (severity)
+	{
+	case GL_DEBUG_SEVERITY_NOTIFICATION:
+		severitystr = "NOTIF";
+		break;
+	case GL_DEBUG_SEVERITY_LOW:
+		severitystr = "WARN";
+		break;
+	case GL_DEBUG_SEVERITY_MEDIUM:
+		severitystr = "ERROR";
+		break;
+	case GL_DEBUG_SEVERITY_HIGH:
+		severitystr = "FATAL";
+		break;
+	default:
+		severitystr = "UNKNOWN";
+		break;
+	}
+
+	std::cout << "[OPENGL "<< severitystr <<"](" << type << ") : " << message << std::endl;
+
+	if (severity == GL_DEBUG_SEVERITY_MEDIUM || severity == GL_DEBUG_SEVERITY_HIGH) {
+		std::cout << "Breaking execution because an error was raised above medium severity!" << std::endl;
+		__debugbreak();
+	}
+}
+
 int main(void) {
 	// https://www.glfw.org/
 	GLFWwindow* window;
@@ -20,6 +50,8 @@ int main(void) {
 	{
 		if (!glfwInit())
 			return -1;
+
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
 		/* Create a windowed mode window and its OpenGL context */
 		window = glfwCreateWindow(640, 480, "OpenGL", NULL, NULL);
@@ -38,6 +70,14 @@ int main(void) {
 
 		std::cout << "Context ready, with GLEW and GLFW initialised." << std::endl;
 		std::cout << "Opengl version : " << glGetString(GL_VERSION) << std::endl;
+	}
+
+	// Sets the debbuging callback in the console
+	{
+		GLuint unused = 0;
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glDebugMessageCallback(MessageCallback, 0);
+		std::cout << "Enabled OpenGL debugging" << std::endl;
 	}
 
 	// > Buffers are data arrays in gpu memory
@@ -89,6 +129,7 @@ int main(void) {
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, bufferid);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glEnableVertexAttribArray(0);
 		glUseProgram(shader);
 	}
 
