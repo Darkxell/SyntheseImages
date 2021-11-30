@@ -63,6 +63,9 @@ int main(void) {
 		/* Make the window's context current */
 		glfwMakeContextCurrent(window);
 
+		// Sets the current window's framerate
+		glfwSwapInterval(1);
+
 		if (glewInit() != GLEW_OK) {
 			std::cout << "Glew couldn't initialize." << std::endl;
 			return -1;
@@ -137,18 +140,18 @@ int main(void) {
 		glUseProgram(shader);
 	}
 
-	float r = 0.0f, inc = 0.05f;
+	float r = 0.0f, inc = 0.01f;
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		if (r > 1.0f) 
-			inc = -0.05f;
-		else if(r< 1.0f)
-			inc = 0.05f;
+		if (r > 1.0f)
+			inc = -0.01f;
+		else if (r < 0.0f)
+			inc = 0.01f;
 		r += inc;
-		glUniform4f(glGetUniformLocation(shader, "u_Color"), 0.2f, 0.3f, 0.8f, 1.0f);
+		glUniform4f(glGetUniformLocation(shader, "u_Color"), r, 0.3f, 0.8f, 1.0f);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
