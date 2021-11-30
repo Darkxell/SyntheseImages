@@ -12,7 +12,7 @@
 
 };*/
 
-/*Processes an OpenGL error message callback*/
+/* Processes an OpenGL error message callback */
 void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
 	std::string severitystr;
 	switch (severity)
@@ -34,7 +34,7 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
 		break;
 	}
 
-	std::cout << "[OPENGL "<< severitystr <<"](" << type << ") : " << message << std::endl;
+	std::cout << "[OPENGL " << severitystr << "](" << type << ") : " << message << std::endl;
 
 	if (severity == GL_DEBUG_SEVERITY_MEDIUM || severity == GL_DEBUG_SEVERITY_HIGH) {
 		std::cout << "Breaking execution because an error was raised above medium severity!" << std::endl;
@@ -123,6 +123,10 @@ int main(void) {
 	{
 		ShaderProgramSources sources = globalManager.ParseShader("shaders/test.glsl");
 		shader = globalManager.CreateShader(sources.VertSource, sources.FragSource);
+		glUseProgram(shader);
+		int location = glGetUniformLocation(shader, "u_Color");
+		_ASSERT(location != -1); // openGL may return -1 even if no error if uniform is unused, it may delete it at compile time.
+		glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f);
 	}
 
 	// Binds the buffers and shaders to draw elements
@@ -133,10 +137,18 @@ int main(void) {
 		glUseProgram(shader);
 	}
 
+	float r = 0.0f, inc = 0.05f;
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		if (r > 1.0f) 
+			inc = -0.05f;
+		else if(r< 1.0f)
+			inc = 0.05f;
+		r += inc;
+		glUniform4f(glGetUniformLocation(shader, "u_Color"), 0.2f, 0.3f, 0.8f, 1.0f);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
